@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menemukan Solusi dengan Berpikir Komputasional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f0fdf4; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        .slide-up { animation: slideUp 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        /* Custom Scrollbar for better UI */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px;}
+        ::-webkit-scrollbar-thumb { background: #4ade80; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #22c55e; }
+
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        .btn-press { transition: transform 0.1s; }
+        .btn-press:active { transform: scale(0.95); }
+        
+        /* Flashcard Flip */
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; transition: transform 0.6s; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        .backface-hidden { backface-visibility: hidden; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased h-screen flex flex-col overflow-hidden bg-slate-100">
+    <div id="root" class="h-full w-full flex flex-col max-w-5xl mx-auto relative shadow-2xl bg-white overflow-hidden"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Custom Modal Component (Menggantikan Alert)
+        const Modal = ({ isOpen, title, message, onClose }) => {
+            if (!isOpen) return null;
+            return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4 fade-in">
+                    <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl slide-up">
+                        <h3 className="text-xl font-bold text-slate-800 mb-2">{title}</h3>
+                        <p className="text-slate-600 mb-6">{message}</p>
+                        <button onClick={onClose} className="w-full py-3 bg-green-500 text-white rounded-xl font-semibold btn-press hover:bg-green-600">
+                            Mengerti
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        const Phase1 = ({ onComplete }) => {
+            const [checks, setChecks] = useState([false, false, false]);
+            const progress = (checks.filter(Boolean).length / 3) * 100;
+
+            const toggleCheck = (index) => {
+                const newChecks = [...checks];
+                newChecks[index] = !newChecks[index];
+                setChecks(newChecks);
+            };
+
+            return (
+                <div className="flex-1 overflow-y-auto p-5 md:p-8 pb-8 space-y-6 slide-up max-w-4xl mx-auto w-full">
+                    <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 md:p-8 text-white shadow-lg">
+                        <h2 className="text-2xl md:text-3xl font-bold mb-2">Fase 1: Memorais</h2>
+                        <p className="text-green-50 text-sm md:text-base">Pelajari materi utuh berikut. Centang setiap bab setelah memahaminya untuk membuka fase selanjutnya.</p>
+                        
+                        <div className="mt-4 bg-white/20 rounded-full h-3 w-full overflow-hidden">
+                            <div className="bg-white h-full transition-all duration-500" style={{ width: `${progress}%` }}></div>
+                        </div>
+                        <p className="text-right text-xs mt-1 font-bold">{Math.round(progress)}% Selesai</p>
+                    </div>
+
+                    <div className="space-y-8 text-sm leading-relaxed text-slate-700">
+                        {/* BAB 1 */}
+                        <div className="glass-card p-5 rounded-2xl shadow-sm border border-slate-100">
+                            <h3 className="text-lg font-bold text-green-600 mb-3 border-b pb-2">BAB 1: Menemukan Solusi & Pengolahan Data</h3>
+                            <p className="mb-2">Dalam kehidupan sehari-hari, kita sering menghadapi data. Untuk mengambil keputusan tepat, kita perlu mengolahnya menggunakan prinsip berpikir komputasional dan spreadsheet.</p>
+                            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-3 text-xs text-yellow-800 rounded">
+                                <strong>💡 Kamus Pintar:</strong> Berpikir komputasional adalah cara berpikir logis dan sistematis layaknya komputer. Algoritma adalah serangkaian langkah logis berurutan.
+                            </div>
+                            <p className="font-bold">4 Fondasi Berpikir Komputasional:</p>
+                            <ul className="list-disc pl-5 mb-3 space-y-1">
+                                <li><strong>Dekomposisi:</strong> Memecah masalah besar menjadi bagian kecil.</li>
+                                <li><strong>Pengenalan Pola:</strong> Menentukan pola yang menyederhanakan proses.</li>
+                                <li><strong>Abstraksi:</strong> Fokus pada data penting, abaikan yang tidak relevan.</li>
+                                <li><strong>Menyusun Algoritma:</strong> Tentukan langkah-langkah logis.</li>
+                            </ul>
+                            <p className="font-bold mt-4">Fungsi Spreadsheet Utama:</p>
+                            <div className="overflow-x-auto my-2">
+                                <table className="w-full text-xs text-left border-collapse">
+                                    <thead><tr className="bg-green-100"><th className="p-2 border">Fungsi</th><th className="p-2 border">Kegunaan</th></tr></thead>
+                                    <tbody>
+                                        <tr><td className="p-2 border font-bold">MAX()</td><td className="p-2 border">Mencari nilai tertinggi.</td></tr>
+                                        <tr><td className="p-2 border font-bold">MIN()</td><td className="p-2 border">Mencari nilai terendah.</td></tr>
+                                        <tr><td className="p-2 border font-bold">AVERAGE()</td><td className="p-2 border">Menghitung rata-rata.</td></tr>
+                                        <tr><td className="p-2 border font-bold">COUNT()</td><td className="p-2 border">Menghitung jumlah data.</td></tr>
+                                        <tr><td className="p-2 border font-bold">IF()</td><td className="p-2 border">Mengecek kondisi (keputusan).</td></tr>
+                                        <tr><td className="p-2 border font-bold">SORT() & FILTER()</td><td className="p-2 border">Mengurutkan dan menyaring data.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p className="font-bold mt-4">Visualisasi Data:</p>
+                            <ul className="list-disc pl-5 mb-3 space-y-1">
+                                <li><strong>Diagram Batang & Kolom:</strong> Membandingkan nilai antar kategori.</li>
+                                <li><strong>Diagram Garis:</strong> Menunjukkan perkembangan/tren dari waktu ke waktu.</li>
+                            </ul>
+                            
+                            <label className="flex items-center space-x-3 mt-4 bg-slate-50 p-3 rounded-lg border cursor-pointer hover:bg-slate-100 transition">
+                                <input type="checkbox" checked={checks[0]} onChange={() => toggleCheck(0)} className="w-5 h-5 text-green-600 rounded focus:ring-green-500"/>
+                                <span className="font-semibold text-slate-700">Saya telah memahami Bab 1</span>
+                            </label>
+                        </div>
+
+                        {/* BAB 2 */}
+                        <div className="glass-card p-5 rounded-2xl shadow-sm border border-slate-100">
+                            <h3 className="text-lg font-bold text-green-600 mb-3 border-b pb-2">BAB 2: Pseudocode & Analisis Lanjutan</h3>
+                            <p className="mb-2"><strong>Pseudocode</strong> adalah cara menuliskan algoritma dalam bentuk bahasa manusia yang mengikuti struktur pemrograman. Tidak dijalankan oleh komputer, tapi untuk perencanaan.</p>
+                            <div className="bg-blue-50 border-l-4 border-blue-400 p-3 mb-3 text-xs text-blue-800 rounded">
+                                <strong>💡 Tech Talk:</strong> Algoritma pertama ditulis oleh Ada Lovelace (1843), menjadikannya programmer pertama di dunia!
+                            </div>
+                            <p className="mb-2"><strong>Variabel</strong> adalah tempat penyimpanan data. Pseudocode punya 3 struktur kontrol:</p>
+                            <ol className="list-decimal pl-5 mb-3 space-y-1 font-semibold">
+                                <li>Urutan (Sequence) - Langkah satu per satu.</li>
+                                <li>Percabangan (Selection) - Memilih jalur sesuai kondisi (IF/ELSE).</li>
+                                <li>Pengulangan (Looping) - Diulang selama kondisi terpenuhi.</li>
+                            </ol>
+                            <label className="flex items-center space-x-3 mt-4 bg-slate-50 p-3 rounded-lg border cursor-pointer hover:bg-slate-100 transition">
+                                <input type="checkbox" checked={checks[1]} onChange={() => toggleCheck(1)} className="w-5 h-5 text-green-600 rounded focus:ring-green-500"/>
+                                <span className="font-semibold text-slate-700">Saya telah memahami Bab 2</span>
+                            </label>
+                        </div>
+
+                        {/* BAB 3 */}
+                        <div className="glass-card p-5 rounded-2xl shadow-sm border border-slate-100">
+                            <h3 className="text-lg font-bold text-green-600 mb-3 border-b pb-2">BAB 3: Menggambarkan Algoritma dalam Flowchart</h3>
+                            <p className="mb-2"><strong>Flowchart (Diagram Alir)</strong> memvisualisasikan algoritma dengan simbol standar internasional (ISO 5807).</p>
+                            <div className="grid grid-cols-2 gap-2 my-4 text-xs text-center">
+                                <div className="bg-slate-50 p-2 rounded border"><div className="w-10 h-6 border-2 border-black rounded-full mx-auto mb-1"></div><strong>Terminator (Elips):</strong> Mulai/Selesai</div>
+                                <div className="bg-slate-50 p-2 rounded border"><div className="w-10 h-6 border-2 border-black mx-auto mb-1"></div><strong>Proses (Persegi):</strong> Tindakan</div>
+                                <div className="bg-slate-50 p-2 rounded border"><div className="w-10 h-6 border-2 border-black mx-auto mb-1 transform skew-x-[-20deg]"></div><strong>Input/Output (Jajar Genjang)</strong></div>
+                                <div className="bg-slate-50 p-2 rounded border"><div className="w-8 h-8 border-2 border-black mx-auto mb-1 transform rotate-45"></div><strong className="block mt-1">Decision (Belah Ketupat):</strong> Ya/Tidak</div>
+                            </div>
+                            <label className="flex items-center space-x-3 mt-4 bg-slate-50 p-3 rounded-lg border cursor-pointer hover:bg-slate-100 transition">
+                                <input type="checkbox" checked={checks[2]} onChange={() => toggleCheck(2)} className="w-5 h-5 text-green-600 rounded focus:ring-green-500"/>
+                                <span className="font-semibold text-slate-700">Saya telah memahami Bab 3</span>
+                            </label>
+                        </div>
+
+                        {progress === 100 && (
+                            <button onClick={onComplete} className="w-full py-4 bg-green-500 text-white rounded-xl font-bold text-lg shadow-lg hover:bg-green-600 btn-press slide-up">
+                                Buka Fase 2: Recall <i className="fas fa-unlock ml-2"></i>
+                            </button>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const Phase2 = ({ onComplete }) => {
+            const [mode, setMode] = useState('flashcard');
+            const [fcIndex, setFcIndex] = useState(0);
+            const [fcFlipped, setFcFlipped] = useState(false);
+            const [stars, setStars] = useState(0);
+            const [modal, setModal] = useState({ isOpen: false, title: '', message: '' });
+
+            const flashcards = [
+                { term: "Berpikir Komputasional", def: "Cara berpikir logis dan sistematis menyelesaikan masalah layaknya komputer." },
+                { term: "Dekomposisi", def: "Memecah masalah besar menjadi bagian-bagian kecil agar mudah diselesaikan." },
+                { term: "Flowchart", def: "Diagram alir visual yang menggunakan simbol untuk menggambarkan algoritma." },
+                { term: "Ada Lovelace", def: "Programmer pertama di dunia yang menulis algoritma pada tahun 1843." }
+            ];
+
+            const [matches, setMatches] = useState([]);
+            const [selectedLeft, setSelectedLeft] = useState(null);
+            const [selectedRight, setSelectedRight] = useState(null);
+            
+            const matchItems = [
+                { id: 'l1', text: 'Mencari Rata-rata', match: 'r1' },
+                { id: 'l2', text: 'Simbol Elips Flowchart', match: 'r2' },
+                { id: 'l3', text: 'Simbol Belah Ketupat', match: 'r3' },
+                { id: 'l4', text: 'Fungsi Percabangan', match: 'r4' },
+            ];
+            const matchTargets = [
+                { id: 'r2', text: 'Terminator (Mulai/Selesai)' },
+                { id: 'r4', text: 'Fungsi IF()' },
+                { id: 'r1', text: 'AVERAGE()' },
+                { id: 'r3', text: 'Decision (Keputusan)' },
+            ];
+
+            const handleNextFC = () => {
+                if (!fcFlipped) {
+                    setModal({ isOpen: true, title: "Tunggu!", message: "Balik kartu dulu untuk membaca pembahasannya ya." });
+                    return;
+                }
+                if (fcIndex < flashcards.length - 1) {
+                    setFcFlipped(false);
+                    setTimeout(() => setFcIndex(fcIndex + 1), 300);
+                    setStars(stars + 10);
+                } else {
+                    setStars(stars + 10);
+                    setMode('match');
+                    setModal({ isOpen: true, title: "Luar Biasa!", message: "Kamu menyelesaikan Flashcard! Mari lanjut ke Game Mencocokkan." });
+                }
+            };
+
+            const handleMatch = (side, id) => {
+                if (side === 'left') setSelectedLeft(id);
+                if (side === 'right') setSelectedRight(id);
+            };
+
+            useEffect(() => {
+                if (selectedLeft && selectedRight) {
+                    const leftItem = matchItems.find(i => i.id === selectedLeft);
+                    if (leftItem.match === selectedRight) {
+                        setMatches([...matches, leftItem.match]);
+                        setStars(s => s + 15);
+                        setSelectedLeft(null); setSelectedRight(null);
+                        
+                        if (matches.length === 3) { // 3 + this 1 = 4
+                            setTimeout(() => {
+                                setModal({ isOpen: true, title: "Fase 2 Selesai!", message: "Poin penuh! Kamu berhak masuk ke Simulasi Lab." });
+                                onComplete();
+                            }, 500);
+                        }
+                    } else {
+                        setModal({ isOpen: true, title: "Oops!", message: "Pasangan tidak cocok. Coba lagi!" });
+                        setSelectedLeft(null); setSelectedRight(null);
+                    }
+                }
+            }, [selectedLeft, selectedRight]);
+
+            return (
+                <div className="flex-1 overflow-y-auto p-5 md:p-8 pb-8 slide-up flex flex-col items-center bg-blue-50 w-full">
+                    <div className="w-full max-w-4xl flex justify-between items-center bg-white p-3 md:p-4 rounded-xl shadow-sm mb-6">
+                        <h2 className="font-bold text-blue-600 md:text-xl">Fase 2: Recall</h2>
+                        <div className="font-bold text-yellow-500 bg-yellow-50 px-3 py-1 rounded-full flex items-center md:text-lg">
+                            <i className="fas fa-star mr-1"></i> {stars}
+                        </div>
+                    </div>
+
+                    <Modal isOpen={modal.isOpen} title={modal.title} message={modal.message} onClose={() => setModal({ ...modal, isOpen: false })} />
+
+                    {mode === 'flashcard' && (
+                        <div className="w-full max-w-md md:max-w-xl flex flex-col items-center">
+                            <p className="text-center mb-4 text-slate-600 text-sm md:text-base">Tap kartu untuk melihat penjelasan, lalu tekan Lanjut.</p>
+                            
+                            <div className="relative w-full h-64 perspective-1000 cursor-pointer mb-6" onClick={() => setFcFlipped(!fcFlipped)}>
+                                <div className={`w-full h-full absolute transform-style-3d ${fcFlipped ? 'rotate-y-180' : ''}`}>
+                                    {/* Front */}
+                                    <div className="w-full h-full absolute backface-hidden bg-gradient-to-br from-blue-400 to-indigo-500 text-white rounded-2xl shadow-xl flex items-center justify-center p-6 text-center text-2xl font-bold border-4 border-white">
+                                        {flashcards[fcIndex].term}
+                                    </div>
+                                    {/* Back */}
+                                    <div className="w-full h-full absolute backface-hidden bg-white text-slate-800 rounded-2xl shadow-xl flex items-center justify-center p-6 text-center border-4 border-indigo-400 rotate-y-180 flex-col">
+                                        <i className="fas fa-lightbulb text-4xl text-yellow-400 mb-4"></i>
+                                        <p className="font-semibold text-lg">{flashcards[fcIndex].def}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="flex justify-between w-full items-center">
+                                <span className="text-sm font-bold text-slate-500">Kartu {fcIndex + 1} / {flashcards.length}</span>
+                                <button onClick={handleNextFC} className="px-6 py-2 bg-indigo-500 text-white font-bold rounded-full shadow hover:bg-indigo-600 btn-press">
+                                    Lanjut <i className="fas fa-arrow-right ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {mode === 'match' && (
+                        <div className="w-full max-w-4xl fade-in">
+                            <p className="text-center mb-4 text-slate-600 text-sm md:text-base font-semibold">Game Mencocokkan: Pilih kotak di kiri, lalu pilih pasangannya di kanan!</p>
+                            <div className="flex flex-col md:flex-row justify-between gap-4 w-full">
+                                <div className="flex-1 space-y-3">
+                                    {matchItems.map(item => (
+                                        <button key={item.id} onClick={() => handleMatch('left', item.id)} disabled={matches.includes(item.match)}
+                                            className={`w-full p-3 text-sm font-bold rounded-xl border-2 transition ${matches.includes(item.match) ? 'bg-green-100 border-green-400 text-green-700 opacity-50' : selectedLeft === item.id ? 'bg-blue-500 border-blue-600 text-white shadow-lg scale-105' : 'bg-white border-blue-200 text-blue-700 shadow-sm hover:bg-blue-50'}`}>
+                                            {item.text}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="flex-1 space-y-3">
+                                    {matchTargets.map(item => (
+                                        <button key={item.id} onClick={() => handleMatch('right', item.id)} disabled={matches.includes(item.id)}
+                                            className={`w-full p-3 text-sm font-bold rounded-xl border-2 transition ${matches.includes(item.id) ? 'bg-green-100 border-green-400 text-green-700 opacity-50' : selectedRight === item.id ? 'bg-orange-500 border-orange-600 text-white shadow-lg scale-105' : 'bg-white border-orange-200 text-orange-700 shadow-sm hover:bg-orange-50'}`}>
+                                            {item.text}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const Phase3 = ({ user, setUser, onComplete, setLabScore }) => {
+            const [modal, setModal] = useState({ isOpen: false, title: '', message: '' });
+            const [isLogged, setIsLogged] = useState(user.name !== '');
+            const [submitted, setSubmitted] = useState(false);
+            
+            // Lab States
+            const [step, setStep] = useState(1);
+            
+            // Data Acak 60 - 100
+            const [raw] = useState(() => {
+                const r = [];
+                for(let i=0; i<5; i++) r.push(Math.floor(Math.random() * 41) + 60);
+                return r;
+            });
+            
+            const [tableData, setTableData] = useState(['', '', '', '', '']);
+            const formulaCards = ['=MAX(B1:B5)', '=MIN(B1:B5)', '=AVERAGE(B1:B5)', '=COUNT(B1:B5)'];
+            const [slots, setSlots] = useState({ max: '', min: '', avg: '', count: '' });
+            const [activeCard, setActiveCard] = useState(null);
+            const [calc, setCalc] = useState({ max: '', min: '', avg: '', count: '' });
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                const n = e.target.nama.value;
+                const k = e.target.kelas.value;
+                const s = e.target.sekolah.value;
+                if(n && k && s) {
+                    setUser({ name: n, class: k, school: s });
+                    setIsLogged(true);
+                } else {
+                    setModal({ isOpen: true, title: 'Error', message: 'Harap isi semua data.'});
+                }
+            };
+
+            const verifyStep1 = () => {
+                const isCorrect = tableData.every((val, i) => parseInt(val) === raw[i]);
+                if (isCorrect) {
+                    setStep(2);
+                    setModal({ isOpen: true, title: 'Hebat!', message: 'Data berhasil dimasukkan ke tabel dengan benar. Lanjut pasang rumusnya!'});
+                } else {
+                    setModal({ isOpen: true, title: 'Cek Lagi!', message: 'Pastikan angka yang kamu masukkan persis dengan urutan Data Mentah.' });
+                }
+            };
+
+            const handleSlotClick = (type) => {
+                if (activeCard) {
+                    setSlots({ ...slots, [type]: activeCard });
+                    setActiveCard(null);
+                } else if (slots[type]) {
+                    setSlots({ ...slots, [type]: '' });
+                }
+            };
+
+            const verifyStep2 = () => {
+                if (slots.max === '=MAX(B1:B5)' && slots.min === '=MIN(B1:B5)' && slots.avg === '=AVERAGE(B1:B5)' && slots.count === '=COUNT(B1:B5)') {
+                    setStep(3);
+                    setModal({ isOpen: true, title: 'Luar Biasa!', message: 'Semua rumus ditempatkan di sel yang tepat. Sekarang mari hitung hasilnya manual sebagai tantangan!'});
+                } else {
+                    setModal({ isOpen: true, title: 'Ada yang salah', message: 'Penempatan kartu rumus belum tepat. Coba periksa kembali kegunaan setiap fungsi.' });
+                }
+            };
+
+            const checkLab = () => {
+                let score = 20; // Poin dasar lulus step 1 & 2
+                
+                const actualMax = Math.max(...raw);
+                const actualMin = Math.min(...raw);
+                const actualAvg = Math.round(raw.reduce((a,b)=>a+b, 0) / raw.length);
+                const actualCount = raw.length;
+
+                let correctCalc = 0;
+                if (parseInt(calc.max) === actualMax) correctCalc++;
+                if (parseInt(calc.min) === actualMin) correctCalc++;
+                if (parseInt(calc.avg) === actualAvg) correctCalc++;
+                if (parseInt(calc.count) === actualCount) correctCalc++;
+                
+                score += (correctCalc * 20); // max 80 + 20 = 100
+
+                setLabScore(score);
+                setSubmitted(true);
+                setModal({ isOpen: true, title: 'Lab Selesai!', message: `Kamu berhasil menganalisis data. Nilai Lab kamu: ${score}. Nilai siap dikirim, mari lanjut ke Ujian Akhir!`});
+            };
+
+            if (!isLogged) {
+                return (
+                    <div className="flex-1 overflow-y-auto p-6 bg-slate-100 flex items-center justify-center slide-up w-full">
+                        <form onSubmit={handleLogin} className="bg-white p-6 md:p-10 rounded-2xl shadow-xl w-full max-w-md md:max-w-lg border-t-4 border-indigo-500">
+                            <h2 className="text-xl md:text-2xl font-bold text-center mb-2 text-indigo-600">Login Simulasi & Ujian</h2>
+                            <p className="text-xs md:text-sm text-center text-slate-500 mb-6">Data ini digunakan untuk pengumpulan nilai otomatis ke sistem guru.</p>
+                            
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="text-sm font-semibold text-slate-700">Nama Lengkap</label>
+                                    <input type="text" name="nama" className="w-full mt-1 p-3 md:p-4 bg-slate-50 border rounded-xl focus:ring-2 focus:ring-indigo-400 outline-none" placeholder="Masukkan nama..." required />
+                                </div>
+                                <div>
+                                    <label className="text-sm font-semibold text-slate-700">Kelas</label>
+                                    <input type="text" name="kelas" className="w-full mt-1 p-3 md:p-4 bg-slate-50 border rounded-xl focus:ring-2 focus:ring-indigo-400 outline-none" placeholder="Contoh: VIII A" required />
+                                </div>
+                                <div>
+                                    <label className="text-sm font-semibold text-slate-700">Asal Sekolah</label>
+                                    <input type="text" name="sekolah" className="w-full mt-1 p-3 md:p-4 bg-slate-50 border rounded-xl focus:ring-2 focus:ring-indigo-400 outline-none" defaultValue="SMP Negeri 2 Ende" required />
+                                </div>
+                                <button type="submit" className="w-full py-3 md:py-4 bg-indigo-500 text-white rounded-xl font-bold md:text-lg shadow-lg hover:bg-indigo-600 btn-press mt-4">
+                                    Mulai Simulasi <i className="fas fa-play ml-1"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <Modal isOpen={modal.isOpen} title={modal.title} message={modal.message} onClose={() => setModal({...modal, isOpen: false})} />
+                    </div>
+                );
+            }
+
+            return (
+                <div className="flex-1 overflow-y-auto p-5 md:p-8 pb-8 slide-up w-full flex flex-col items-center">
+                    <div className="w-full max-w-4xl">
+                        <Modal isOpen={modal.isOpen} title={modal.title} message={modal.message} onClose={() => {
+                            setModal({...modal, isOpen: false});
+                            if(submitted) onComplete();
+                        }} />
+
+                        <div className="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl p-5 md:p-8 text-white shadow-lg mb-6 w-full">
+                            <h2 className="text-xl md:text-3xl font-bold mb-1">Fase 3: Simulasi Lab Interaktif</h2>
+                            <p className="text-xs md:text-sm opacity-90">Halo {user.name}, saatnya praktek menggunakan fungsi spreadsheet!</p>
+                        </div>
+
+                        {/* PROGRESS BAR LAB */}
+                        <div className="flex items-center space-x-2 mb-6 text-xs md:text-sm font-bold text-slate-500">
+                            <div className={`flex-1 p-2 rounded text-center transition-colors ${step >= 1 ? 'bg-purple-100 text-purple-700 border border-purple-200 shadow-sm' : 'bg-slate-100'}`}>1. Input Data</div>
+                            <div className={`flex-1 p-2 rounded text-center transition-colors ${step >= 2 ? 'bg-purple-100 text-purple-700 border border-purple-200 shadow-sm' : 'bg-slate-100'}`}>2. Rumus</div>
+                            <div className={`flex-1 p-2 rounded text-center transition-colors ${step >= 3 ? 'bg-purple-100 text-purple-700 border border-purple-200 shadow-sm' : 'bg-slate-100'}`}>3. Analisis</div>
+                        </div>
+
+                        {step === 1 && (
+                            <div className="bg-white rounded-xl shadow-sm border p-4 md:p-8 mb-6 animate-fade-in">
+                                <h3 className="font-bold text-slate-700 mb-3 border-b pb-2 md:text-lg">Langkah 1: Input Data Mentah</h3>
+                                <p className="text-sm md:text-base text-slate-600 mb-4">Guru memberikan data nilai secara acak: 
+                                    <span className="inline-block font-mono font-bold text-indigo-600 bg-indigo-50 px-3 py-1 ml-2 rounded border border-indigo-200 shadow-sm">{raw.join(', ')}</span>
+                                </p>
+                                <p className="text-sm text-slate-600 mb-4 bg-yellow-50 p-3 rounded border border-yellow-200"><i className="fas fa-lightbulb text-yellow-500 mr-2"></i>Tugas: Masukkan kelima data nilai di atas secara berurutan ke dalam tabel kolom B!</p>
+                                
+                                <div className="overflow-x-auto">
+                                    <table className="w-full min-w-[300px] text-center text-sm md:text-base mb-6 border">
+                                        <thead>
+                                            <tr className="bg-slate-100"><th className="border p-2 w-16">Sel</th><th className="border p-2">A (Nama)</th><th className="border p-2 w-1/2">B (Nilai)</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            {['Ali', 'Budi', 'Citra', 'Dina', 'Eko'].map((name, i) => (
+                                                <tr key={i}>
+                                                    <td className="border p-2 bg-slate-50 font-mono text-slate-500">{i+1}</td>
+                                                    <td className="border p-2 text-left px-4 font-semibold text-slate-700">{name}</td>
+                                                    <td className="border p-2 bg-indigo-50/30">
+                                                        <input type="number" value={tableData[i]} onChange={e => {
+                                                            const newData = [...tableData];
+                                                            newData[i] = e.target.value;
+                                                            setTableData(newData);
+                                                        }} className="border border-slate-300 p-2 w-full text-center rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none font-mono text-lg" placeholder="?" />
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <button onClick={verifyStep1} className="w-full py-3 md:py-4 bg-indigo-500 text-white rounded-xl font-bold md:text-lg shadow-lg hover:bg-indigo-600 btn-press">
+                                    Cek Tabel Data <i className="fas fa-check ml-2"></i>
+                                </button>
+                            </div>
+                        )}
+
+                        {step === 2 && (
+                            <div className="bg-white rounded-xl shadow-sm border p-4 md:p-8 mb-6 animate-fade-in">
+                                <h3 className="font-bold text-slate-700 mb-3 border-b pb-2 md:text-lg">Langkah 2: Menempatkan Rumus</h3>
+                                <p className="text-sm md:text-base text-slate-600 mb-4 bg-blue-50 p-3 rounded border border-blue-200"><i className="fas fa-hand-pointer text-blue-500 mr-2"></i><strong>Tap & Match:</strong> Ketuk kartu rumus di kotak abu-abu, lalu ketuk sel target di tabel bawahnya!</p>
+                                
+                                <div className="flex flex-wrap gap-2 md:gap-4 justify-center mb-6 p-4 md:p-6 bg-slate-100 rounded-xl border border-dashed border-slate-300 min-h-[100px] items-center">
+                                    {formulaCards.map(fc => {
+                                        const isPlaced = Object.values(slots).includes(fc);
+                                        if (isPlaced) return null;
+                                        return (
+                                            <button key={fc} onClick={() => setActiveCard(activeCard === fc ? null : fc)}
+                                                className={`px-4 py-3 text-sm md:text-base font-mono font-bold rounded-xl border-2 transition-transform ${activeCard === fc ? 'bg-indigo-500 border-indigo-700 text-white scale-110 shadow-lg' : 'bg-white border-indigo-300 text-indigo-700 shadow-sm hover:bg-indigo-50'}`}>
+                                                {fc}
+                                            </button>
+                                        )
+                                    })}
+                                    {Object.values(slots).every(v => v !== '') && <span className="text-green-600 font-bold md:text-lg animate-pulse"><i className="fas fa-check-circle mr-2"></i>Semua kartu diletakkan!</span>}
+                                </div>
+
+                                <div className="overflow-x-auto">
+                                    <table className="w-full min-w-[300px] text-center text-sm md:text-base mb-6 border">
+                                        <thead>
+                                            <tr className="bg-slate-100"><th className="border p-2">Deskripsi Tujuan</th><th className="border p-2">Sel Rumus (Tap di sini)</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            {[
+                                                { id: 'max', label: 'Mencari Nilai Tertinggi Kelas' },
+                                                { id: 'min', label: 'Mencari Nilai Terendah Kelas' },
+                                                { id: 'avg', label: 'Menghitung Rata-rata Kelas' },
+                                                { id: 'count', label: 'Menghitung Jumlah Siswa' }
+                                            ].map(row => (
+                                                <tr key={row.id}>
+                                                    <td className="border p-3 bg-slate-50 font-semibold text-left px-4 w-1/2 text-slate-700">{row.label}</td>
+                                                    <td className="border p-2 bg-indigo-50/30">
+                                                        <button onClick={() => handleSlotClick(row.id)} 
+                                                            className={`w-full min-h-[50px] p-2 rounded-lg border-2 border-dashed transition-all ${slots[row.id] ? 'bg-green-100 border-green-500 font-mono font-bold text-green-700 shadow-inner' : (activeCard ? 'bg-yellow-100 border-yellow-500 animate-pulse text-yellow-700' : 'bg-white border-slate-300 text-slate-400 hover:bg-slate-50')}`}>
+                                                            {slots[row.id] || 'Ketuk untuk meletakkan'}
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div className="flex justify-between gap-4 mt-6">
+                                    <button onClick={() => setStep(1)} className="px-6 py-3 bg-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-300 btn-press flex-1 md:flex-none">
+                                        Kembali
+                                    </button>
+                                    <button onClick={verifyStep2} className="px-6 py-3 bg-indigo-500 text-white rounded-xl font-bold shadow hover:bg-indigo-600 btn-press flex-[2]">
+                                        Cek Rumus <i className="fas fa-arrow-right ml-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {step === 3 && (
+                            <div className="bg-white rounded-xl shadow-sm border p-4 md:p-8 mb-6 animate-fade-in">
+                                <h3 className="font-bold text-slate-700 mb-3 border-b pb-2 md:text-lg">Langkah 3: Tantangan Analisis Ekstra</h3>
+                                <p className="text-sm md:text-base text-slate-600 mb-4 bg-purple-50 p-3 rounded border border-purple-200"><i className="fas fa-brain text-purple-500 mr-2"></i>Berdasarkan <strong>data yang kamu input</strong> di Langkah 1, jika komputer mengeksekusi rumus tersebut, berapakah hasil yang akan keluar? Hitung manual!</p>
+                                
+                                <div className="flex flex-col md:flex-row gap-6 mb-6">
+                                    <div className="md:w-1/3 bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-inner">
+                                        <p className="text-xs md:text-sm font-bold text-slate-500 mb-3 border-b pb-2">Tabel Data Kamu:</p>
+                                        <ul className="text-sm md:text-base font-mono space-y-2 text-slate-700">
+                                            {raw.map((r,i) => <li key={i} className="flex justify-between"><span>B{i+1} ({['Ali', 'Budi', 'Citra', 'Dina', 'Eko'][i]})</span> <span className="font-bold">{r}</span></li>)}
+                                        </ul>
+                                    </div>
+                                    
+                                    <div className="md:w-2/3 space-y-4 bg-white p-5 rounded-xl border border-slate-200">
+                                        {[
+                                            { id: 'max', label: '=MAX(B1:B5)', desc: 'Nilai Tertinggi' },
+                                            { id: 'min', label: '=MIN(B1:B5)', desc: 'Nilai Terendah' },
+                                            { id: 'avg', label: '=AVERAGE(B1:B5)', desc: 'Rata-rata (Bulatkan)' },
+                                            { id: 'count', label: '=COUNT(B1:B5)', desc: 'Jumlah Siswa' }
+                                        ].map(row => (
+                                            <div key={row.id} className="flex items-center justify-between border-b border-slate-100 pb-3">
+                                                <div>
+                                                    <p className="text-sm md:text-base font-mono font-bold text-indigo-700">{row.label}</p>
+                                                    <p className="text-xs text-slate-500">{row.desc}</p>
+                                                </div>
+                                                <input type="number" value={calc[row.id]} onChange={e=>setCalc({...calc, [row.id]: e.target.value})} className="border-2 border-slate-300 p-2 md:p-3 w-24 md:w-32 text-center rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none font-mono text-lg transition-all" placeholder="Hasil" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {!submitted && (
+                                    <button onClick={checkLab} className="w-full mt-4 py-4 bg-purple-500 text-white rounded-xl font-bold md:text-lg shadow-lg hover:bg-purple-600 btn-press">
+                                        Kumpulkan Analisis Lab <i className="fas fa-check-circle ml-2"></i>
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const questions = [
+            { id: 1, type: 'pg', q: "Perhatikan pernyataan berikut.\n(1) cara cepat mengoperasikan komputer\n(2) menyelesaikan masalah dengan langkah-langkah sistematis\n(3) teknik menggambar menggunakan komputer\n(4) pengolahan data secara sistematis\n\nPernyataan yang tepat mengenai berpikir komputasional adalah ....", options: ["(1) dan (3)", "(2) dan (3)", "(2) dan (4)", "(3) dan (4)"], a: 2 },
+            { id: 2, type: 'pg', q: "Pengolahan data membutuhkan beberapa fungsi untuk membantu mengolah data dengan cepat dan akurat. Dalam pengolahan data, fungsi AVERAGE digunakan untuk ....", options: ["mencari nilai terkecil", "menjumlahkan seluruh data", "mencari nilai rata-rata", "menghapus data duplikat"], a: 2 },
+            { id: 3, type: 'pg', q: "Prinsip berpikir komputasional sangat diperlukan saat melakukan pengolahan data. Berikut yang termasuk prinsip berpikir komputasional adalah ....", options: ["menyalin file dari computer", "menyusun langkah-langkah sistematis", "mengetik dokumen", "menonton video pembelajaran"], a: 1 },
+            { id: 4, type: 'pg', q: "Perhatikan beberapa fungsi dasar pada spreadsheet berikut.\n(1) COUNT\n(2) AVERAGE\n(3) MAX\n(4) SUM\n\nDeni ingin menghitung rata-rata dan menentukan nilai tertinggi dari data nilai ulangan IPA teman-teman sekelasnya menggunakan spreadsheet. Fungsi yang dapat digunakan oleh Deni adalah ....", options: ["(1) dan (3)", "(2) dan (3)", "(2) dan (4)", "(3) dan (4)"], a: 1 },
+            { id: 5, type: 'pg', q: "Pseudocode adalah cara menuliskan algoritma dalam bentuk seperti bahasa manusia biasa, tetapi tetap mengikuti struktur dan logika pemrograman. Langkah pertama dalam membuat pseudocode adalah ....", options: ["menulis program dengan bahasa asing", "menggunakan animasi", "mengidentifikasi masalah dan menentukan tujuannya", "menyalin kode dari internet"], a: 2 },
+            { id: 6, type: 'pg', q: "Pseudocode memiliki tiga jenis struktur kontrol, yaitu urutan, percabangan, dan pengulangan. Struktur kontrol percabangan digunakan ketika ....", options: ["data harus disusun dari kecil ke besar", "ingin menjalankan perintah hanya jika kondisi tertentu terpenuhi", "ingin menampilkan semua data", "perlu menghapus data"], a: 1 },
+            { id: 7, type: 'pg', q: "Ketika menggambar flowchart, kita perlu mengenal beberapa simbol standar. Dalam flowchart, simbol belah ketupat menunjukkan ....", options: ["proses", "awal dan akhir", "keputusan atau kondisi", "teks atau catatan"], a: 2 },
+            { id: 8, type: 'pg', q: "Spreadsheet memiliki beberapa fungsi dasar yang bermanfaat untuk pengolahan data salah satunya adalah fungsi COUNT. Fungsi COUNT dalam spreadsheet digunakan untuk ....", options: ["menjumlahkan seluruh kolom", "menghitung banyaknya data numerik", "menghapus semua data", "menyalin data antarsheet"], a: 1 },
+            { id: 9, type: 'pg', q: "Perhatikan pseudocode berikut.\n\nMulai\nMasukkan nilai_matematika\nMasukkan nilai_ipa\nMasukkan nilai_bahasa\nJumlah = nilai_matematika + nilai_bahasa + nilai_ipa\nRata_rata = Jumlah / 3\nJika Rata_rata >= 75\n  Tampilkan \"Lulus\"\nJika Rata_rata >= 60\n  Tampilkan \"Mengulang\"\nJika tidak\n  Tampilkan \"Tidak Lulus\"\nSelesai\n\nSeorang siswa mendapatkan nilai Matematika: 70, IPA: 80, Bahasa: 65. Berdasarkan pseudocode di atas, status kelulusan siswa tersebut dan alasannya adalah ...", options: ["Lulus, karena rata-ratanya 71.67 lebih besar dari 60 dan memenuhi kriteria pertama.", "Mengulang, karena rata-ratanya 71.67 tidak mencapai 75 tetapi lebih dari atau sama dengan 60.", "Tidak lulus, karena rata-ratanya 71.67 tidak mencapai 75 dan juga tidak mencapai 60.", "Lulus, karena nilai IPA-nya yang tinggi sudah cukup untuk membuatnya lulus."], a: 1 },
+            { id: 10, type: 'pg', q: "Perhatikan pseudocode berikut.\n\nMulai\nTampilkan \"Pilih menu: 1 = Nasi Goreng, 2 = Mie Ayam\"\nMasukkan pilihan\nJika pilihan = 1\n  Tampilkan \"Kamu memilih Nasi Goreng\"\nJika pilihan = 2\n  Tampilkan \"Kamu memilih Mie Ayam\"\nJika tidak\n  Tampilkan \"Pilihan tidak tersedia\"\nSelesai\n\nSimbol flowchart yang digunakan untuk membuat logika percabangan pseudocode tersebut adalah ....", options: ["terminator dan proses", "terminator dan input", "input dan proses", "input dan decisions"], a: 3 },
+            { id: 11, type: 'tf', q: "Spreadsheet pertama dibuat pada tahun 1979 dengan nama VisiCalc.", a: 'true' },
+            { id: 12, type: 'pg', q: "Fokus hanya pada data penting dan mengabaikan yang tidak relevan disebut...", options: ["Dekomposisi", "Pengenalan Pola", "Abstraksi", "Algoritma"], a: 2 },
+            { id: 13, type: 'pg', q: "Langkah-langkah logis dan berurutan untuk menyelesaikan masalah disebut...", options: ["Algoritma", "Spreadsheet", "Data", "Variabel"], a: 0 },
+            { id: 14, type: 'pg', q: "Fungsi yang digunakan untuk mengecek kondisi (misal: Lulus/Remedial) adalah...", options: ["=FILTER()", "=SORT()", "=IF()", "=AVERAGE()"], a: 2 },
+            { id: 15, type: 'pg', q: "Visualisasi data mana yang paling cocok untuk melihat tren dari waktu ke waktu?", options: ["Pie Chart", "Diagram Garis", "Diagram Batang", "Flowchart"], a: 1 },
+            { id: 16, type: 'multi', q: "Manakah yang termasuk struktur kontrol dalam Pseudocode? (Pilih 3)", options: ["Urutan (Sequence)", "Visualisasi", "Percabangan (Selection)", "Pengulangan (Looping)"], a: [0, 2, 3] },
+            { id: 17, type: 'text', q: "Isian Singkat: Simbol belah ketupat pada flowchart berfungsi untuk pengambilan...", a: "keputusan" },
+            { id: 18, type: 'tf', q: "Pseudocode adalah kode yang dapat langsung dijalankan oleh komputer.", a: 'false' },
+            { id: 19, type: 'pg', q: "Simbol elips pada flowchart (Terminator) digunakan untuk...", options: ["Proses", "Input / Output", "Awal (Start) & Akhir (End)", "Pengambilan Keputusan"], a: 2 },
+            { id: 20, type: 'text', q: "Isian Singkat: Fungsi spreadsheet untuk mencari nilai tertinggi adalah...", a: "max" }
+        ];
+
+        const Phase4 = ({ user, labScore, gasUrl }) => {
+            const [qIndex, setQIndex] = useState(0);
+            const [userAnswers, setUserAnswers] = useState({});
+            const [isFinished, setIsFinished] = useState(false);
+            const [finalScore, setFinalScore] = useState(0);
+            const [timeElapsed, setTimeElapsed] = useState(0);
+            const [isSubmitting, setIsSubmitting] = useState(false);
+            const [modal, setModal] = useState({ isOpen: false, title: '', message: '' });
+
+            useEffect(() => {
+                let timer;
+                if (!isFinished) {
+                    timer = setInterval(() => setTimeElapsed(t => t + 1), 1000);
+                }
+                return () => clearInterval(timer);
+            }, [isFinished]);
+
+            const handleAnswer = (val) => {
+                setUserAnswers({ ...userAnswers, [qIndex]: val });
+            };
+
+            const handleMultiAnswer = (idx) => {
+                const current = userAnswers[qIndex] || [];
+                const updated = current.includes(idx) ? current.filter(i => i !== idx) : [...current, idx];
+                setUserAnswers({ ...userAnswers, [qIndex]: updated });
+            };
+
+            const formatTime = (seconds) => {
+                const m = Math.floor(seconds / 60);
+                const s = seconds % 60;
+                return `${m}m ${s}s`;
+            };
+
+            const calculateScore = () => {
+                let score = 0;
+                questions.forEach((q, idx) => {
+                    const ans = userAnswers[idx];
+                    if (q.type === 'pg' || q.type === 'tf') {
+                        if (ans === q.a) score += 5; // 20 * 5 = 100
+                    } else if (q.type === 'text') {
+                        if (ans && ans.toLowerCase().trim() === q.a) score += 5;
+                    } else if (q.type === 'multi') {
+                        if (Array.isArray(ans) && ans.length === q.a.length && ans.every(v => q.a.includes(v))) {
+                            score += 5;
+                        }
+                    }
+                });
+                return score;
+            };
+
+            const finishExam = async () => {
+                const score = calculateScore();
+                setFinalScore(score);
+                setIsFinished(true);
+                submitData(score);
+            };
+
+            const submitData = async (examScore) => {
+                if(!gasUrl) {
+                    setModal({ isOpen: true, title: 'Perhatian!', message: `Nilai kamu ${examScore}. Namun pengiriman gagal karena URL Web App belum diatur di menu Panduan.`});
+                    return;
+                }
+                
+                setIsSubmitting(true);
+                try {
+                    // Send Lab Data
+                    const fdLab = new URLSearchParams();
+                    fdLab.append("Waktu", new Date().toLocaleString("id-ID"));
+                    fdLab.append("Nama", user.name);
+                    fdLab.append("Kelas", user.class);
+                    fdLab.append("Sekolah", user.school);
+                    fdLab.append("Tipe_Kegiatan", "Simulasi Lab");
+                    fdLab.append("Nilai", labScore);
+                    fdLab.append("Waktu_Pengerjaan", "-");
+                    
+                    await fetch(gasUrl, { method: "POST", body: fdLab, mode: "no-cors" });
+
+                    // Send Exam Data
+                    const fdExam = new URLSearchParams();
+                    fdExam.append("Waktu", new Date().toLocaleString("id-ID"));
+                    fdExam.append("Nama", user.name);
+                    fdExam.append("Kelas", user.class);
+                    fdExam.append("Sekolah", user.school);
+                    fdExam.append("Tipe_Kegiatan", "Exam Final");
+                    fdExam.append("Nilai", examScore);
+                    fdExam.append("Waktu_Pengerjaan", formatTime(timeElapsed));
+                    
+                    await fetch(gasUrl, { method: "POST", body: fdExam, mode: "no-cors" });
+                    
+                    setModal({ isOpen: true, title: 'Berhasil!', message: 'Nilai Simulasi Lab dan Exam kamu telah terkirim ke server Guru.'});
+                } catch (error) {
+                    setModal({ isOpen: true, title: 'Error Jaringan', message: 'Gagal mengirim nilai. Pastikan internet stabil dan URL Web App benar.'});
+                }
+                setIsSubmitting(false);
+            };
+
+            if (isFinished) {
+                return (
+                    <div className="flex-1 p-6 flex flex-col items-center justify-center slide-up text-center space-y-4 w-full">
+                        <Modal isOpen={modal.isOpen} title={modal.title} message={modal.message} onClose={() => setModal({...modal, isOpen: false})} />
+                        <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center border-4 border-green-500 mb-2">
+                            <i className="fas fa-check text-5xl text-green-500"></i>
+                        </div>
+                        <h2 className="text-2xl md:text-3xl font-bold text-slate-800">Ujian Selesai!</h2>
+                        <div className="bg-white p-5 md:p-8 rounded-2xl shadow-lg border w-full max-w-md md:max-w-lg">
+                            <p className="text-sm md:text-base text-slate-500 mb-1">Nama: <strong>{user.name}</strong></p>
+                            <p className="text-sm md:text-base text-slate-500 mb-4">Waktu: <strong>{formatTime(timeElapsed)}</strong></p>
+                            
+                            <div className="flex justify-around mb-4 border-t pt-4">
+                                <div>
+                                    <p className="text-xs text-slate-500">Nilai Lab</p>
+                                    <p className="text-3xl font-bold text-purple-600">{labScore}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-slate-500">Nilai Exam</p>
+                                    <p className="text-3xl font-bold text-red-500">{finalScore}</p>
+                                </div>
+                            </div>
+                            
+                            {isSubmitting ? (
+                                <p className="text-blue-500 font-bold animate-pulse text-sm"><i className="fas fa-spinner fa-spin mr-2"></i> Mengirim data ke server...</p>
+                            ) : (
+                                <p className="text-green-600 font-bold text-sm"><i className="fas fa-cloud-upload-alt mr-1"></i> Data Telah Direkam</p>
+                            )}
+                        </div>
+                    </div>
+                );
+            }
+
+            const q = questions[qIndex];
+
+            return (
+                <div className="flex-1 overflow-y-auto p-5 md:p-8 pb-8 slide-up flex flex-col items-center w-full">
+                    <div className="w-full max-w-4xl flex flex-col h-full">
+                        <div className="flex justify-between items-center mb-4 bg-white p-3 md:p-4 rounded-xl shadow-sm">
+                            <span className="font-bold text-red-500 md:text-lg">Soal {qIndex + 1} / 20</span>
+                            <span className="font-mono bg-slate-100 px-3 py-1 rounded-full text-sm md:text-base"><i className="far fa-clock"></i> {formatTime(timeElapsed)}</span>
+                        </div>
+
+                        <div className="bg-white p-6 md:p-10 rounded-2xl shadow-sm border mb-6 flex-1 flex flex-col justify-center w-full">
+                            <p className="text-base md:text-lg font-semibold text-slate-800 mb-8 leading-relaxed whitespace-pre-line">{q.q}</p>
+                            
+                            <div className="space-y-3 md:space-y-4 w-full max-w-2xl mx-auto">
+                                {q.type === 'pg' && q.options.map((opt, i) => (
+                                    <button key={i} onClick={() => handleAnswer(i)}
+                                        className={`w-full text-left p-4 rounded-xl border-2 transition ${userAnswers[qIndex] === i ? 'bg-indigo-50 border-indigo-500 font-bold text-indigo-700' : 'bg-white border-slate-200 hover:bg-slate-50'}`}>
+                                        {String.fromCharCode(65 + i)}. {opt}
+                                    </button>
+                                ))}
+
+                                {q.type === 'tf' && (
+                                    <div className="flex gap-4">
+                                        <button onClick={() => handleAnswer('true')} className={`flex-1 p-4 rounded-xl border-2 font-bold transition ${userAnswers[qIndex] === 'true' ? 'bg-green-50 border-green-500 text-green-700' : 'bg-white border-slate-200 hover:bg-slate-50'}`}>BENAR</button>
+                                        <button onClick={() => handleAnswer('false')} className={`flex-1 p-4 rounded-xl border-2 font-bold transition ${userAnswers[qIndex] === 'false' ? 'bg-red-50 border-red-500 text-red-700' : 'bg-white border-slate-200 hover:bg-slate-50'}`}>SALAH</button>
+                                    </div>
+                                )}
+
+                                {q.type === 'text' && (
+                                    <input type="text" placeholder="Ketik jawabanmu di sini..." value={userAnswers[qIndex] || ''} onChange={(e) => handleAnswer(e.target.value)}
+                                        className="w-full p-4 border-2 border-slate-300 rounded-xl focus:border-red-500 focus:outline-none" />
+                                )}
+
+                                {q.type === 'multi' && q.options.map((opt, i) => (
+                                    <label key={i} className={`flex items-center space-x-3 w-full p-4 rounded-xl border-2 cursor-pointer transition ${(userAnswers[qIndex] || []).includes(i) ? 'bg-indigo-50 border-indigo-500 font-bold text-indigo-700' : 'bg-white border-slate-200 hover:bg-slate-50'}`}>
+                                        <input type="checkbox" checked={(userAnswers[qIndex] || []).includes(i)} onChange={() => handleMultiAnswer(i)} className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
+                                        <span>{opt}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="flex justify-between mt-auto">
+                            <button onClick={() => setQIndex(i => Math.max(0, i - 1))} disabled={qIndex === 0}
+                                className={`px-6 py-3 rounded-xl font-bold ${qIndex === 0 ? 'bg-slate-200 text-slate-400' : 'bg-slate-800 text-white btn-press'}`}>
+                                Kembali
+                            </button>
+                            
+                            {qIndex < questions.length - 1 ? (
+                                <button onClick={() => setQIndex(i => i + 1)} className="px-6 py-3 bg-red-500 text-white rounded-xl font-bold shadow-lg hover:bg-red-600 btn-press">
+                                    Selanjutnya <i className="fas fa-chevron-right ml-1"></i>
+                                </button>
+                            ) : (
+                                <button onClick={finishExam} className="px-6 py-3 bg-green-500 text-white rounded-xl font-bold shadow-lg hover:bg-green-600 btn-press animate-pulse">
+                                    Selesai & Kirim <i className="fas fa-paper-plane ml-1"></i>
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const phases = [
+            { id: 'p1', title: 'Fase 1: Memorais', icon: 'fa-book-open', color: 'bg-gradient-to-br from-green-400 to-emerald-600' },
+            { id: 'p2', title: 'Fase 2: Recall', icon: 'fa-gamepad', color: 'bg-gradient-to-br from-blue-400 to-indigo-600' },
+            { id: 'p3', title: 'Fase 3: Simulasi Lab', icon: 'fa-flask', color: 'bg-gradient-to-br from-purple-400 to-fuchsia-600' },
+            { id: 'p4', title: 'Fase 4: Exam', icon: 'fa-file-alt', color: 'bg-gradient-to-br from-red-400 to-rose-600' }
+        ];
+
+        const App = () => {
+            const [view, setView] = useState('home'); // home, p1, p2, p3, p4, profile, guide
+            const [unlockedPhase, setUnlockedPhase] = useState(1);
+            const [user, setUser] = useState({ name: '', class: '', school: '' });
+            const [labScore, setLabScore] = useState(0);
+            
+            // GANTI URL INI DENGAN URL WEB APP GOOGLE SCRIPT ANDA
+            const [gasUrl, setGasUrl] = useState("https://script.google.com/macros/s/AKfycbwqTzpQQ7XAooJqIzhEUVvOaEDctSPuW7n43pETQf_JbtQh2eyQCCJCgKmCycopH4c0sw/exec"); 
+            const [isUrlLocked, setIsUrlLocked] = useState(true);
+            const [passwordInput, setPasswordInput] = useState('');
+            
+            const [isPembahasanLocked, setIsPembahasanLocked] = useState(true);
+            const [pembahasanPassword, setPembahasanPassword] = useState('');
+
+            const renderHome = () => (
+                <div className="flex-1 overflow-y-auto p-4 md:p-10 pb-8 slide-up flex flex-col items-center w-full">
+                    <div className="text-center mt-2 md:mt-8 mb-6 md:mb-12">
+                        <img src="https://img.icons8.com/fluency/96/000000/source-code.png" alt="Logo" className="w-16 md:w-28 mx-auto mb-3 md:mb-6 animate-bounce" />
+                        <h1 className="text-xl md:text-4xl lg:text-5xl font-bold text-slate-800 leading-tight">Menemukan Solusi<br/><span className="text-indigo-600">Berpikir Komputasional</span></h1>
+                        <p className="text-slate-500 text-xs md:text-lg mt-2">SMP Negeri 2 Ende | Mapel Informatika</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-8 flex-1 content-start w-full max-w-5xl px-1">
+                        {phases.map((p, idx) => {
+                            const isLocked = unlockedPhase < (idx + 1);
+                            return (
+                                <button key={p.id} onClick={() => !isLocked && setView(p.id)}
+                                    className={`relative p-4 md:p-8 rounded-2xl md:rounded-3xl flex flex-col items-center justify-center border-2 transition-all ${isLocked ? 'bg-slate-100 border-slate-200 opacity-60' : `${p.color} border-transparent text-white shadow-xl btn-press transform hover:-translate-y-2 hover:shadow-2xl`}`}>
+                                    <i className={`fas ${isLocked ? 'fa-lock text-slate-400' : p.icon} text-2xl md:text-5xl mb-2 md:mb-5`}></i>
+                                    <span className={`font-bold text-xs md:text-xl ${isLocked ? 'text-slate-500' : 'text-white'}`}>{p.title}</span>
+                                    {!isLocked && <div className="absolute top-2 right-2 md:top-4 md:right-4 w-3 h-3 md:w-4 md:h-4 bg-white rounded-full animate-ping"></div>}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+
+            const renderProfile = () => (
+                <div className="flex-1 overflow-y-auto p-6 pb-8 slide-up bg-white text-center">
+                    <h2 className="text-2xl font-bold text-slate-800 mb-6 border-b pb-4">Profil Pengembang</h2>
+                    <img src="https://www.image2url.com/r2/default/images/1787417552216-3f3fe7e5-bc7b-4da1-b496-4ca3d251d6ed.png" alt="Danar Wulan" className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-indigo-500 shadow-lg mb-4" />
+                    <h3 className="text-xl font-bold text-indigo-700">Danar Wulan, S.Si</h3>
+                    <p className="text-slate-500 text-sm mb-4">Guru IPA | NIP: 198508152017081001<br/>SMP Negeri 2 Ende</p>
+                    
+                    <div className="text-left space-y-4 text-sm mt-6">
+                        <div className="bg-indigo-50 p-4 rounded-xl">
+                            <h4 className="font-bold text-indigo-800 mb-2"><i className="fas fa-award mr-2"></i>Sertifikasi & Keahlian</h4>
+                            <ul className="list-disc pl-5 text-slate-700">
+                                <li>Google Certified Trainer</li>
+                                <li>Gemini Certified Educator</li>
+                                <li>Trainer Resmi Quizizz & Wayground</li>
+                            </ul>
+                        </div>
+                        <div className="bg-blue-50 p-4 rounded-xl">
+                            <h4 className="font-bold text-blue-800 mb-2"><i className="fas fa-road mr-2"></i>Rekam Jejak</h4>
+                            <ul className="list-disc pl-5 text-slate-700">
+                                <li>Pengajar Praktik (Angkatan 10) & Guru Penggerak (Angkatan 3)</li>
+                                <li>Mentor Digital GCE L1 & L2, Mentor KSRG</li>
+                                <li>Sahabat Rumah Belajar Kemendikbudristek</li>
+                            </ul>
+                        </div>
+                        <div className="bg-yellow-50 p-4 rounded-xl">
+                            <h4 className="font-bold text-yellow-800 mb-2"><i className="fas fa-trophy mr-2"></i>Prestasi</h4>
+                            <ul className="list-disc pl-5 text-slate-700">
+                                <li>Terbaik 1 Guru SMP Inovatif Tk. Provinsi NTT</li>
+                                <li>Sahabat Rumah Belajar 2010</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div className="mt-6 flex justify-center space-x-4">
+                        <a href="mailto:danarwulan58@guru.smp.belajar.id" className="text-2xl text-red-500 hover:scale-110 transition"><i className="fas fa-envelope"></i></a>
+                        <a href="https://wa.me/6282237142381" className="text-2xl text-green-500 hover:scale-110 transition"><i className="fab fa-whatsapp"></i></a>
+                        <a href="https://pagurudan.my.id" className="text-2xl text-blue-500 hover:scale-110 transition"><i className="fas fa-globe"></i></a>
+                    </div>
+                </div>
+            );
+
+            const renderGuide = () => (
+                <div className="flex-1 overflow-y-auto p-6 pb-8 slide-up bg-slate-50">
+                    <h2 className="text-2xl font-bold text-slate-800 mb-4 border-b pb-2"><i className="fas fa-info-circle text-blue-500 mr-2"></i>Sumber & Panduan</h2>
+                    
+                    <div className="bg-white p-4 rounded-xl shadow-sm border mb-4 text-sm">
+                        <h3 className="font-bold text-slate-700 mb-2">Sumber Materi</h3>
+                        <p className="text-slate-600">Buku <em>Explore Koding dan Kecerdasan Artifisial Kelas VIII</em>, Penerbit Erlangga.</p>
+                        <p className="text-slate-600 mt-2">MODUL BELAJAR MANDIRI UTUH - Disusun Khusus untuk Siswa SMP Negeri 2 Ende.</p>
+                    </div>
+
+                    <div className="bg-yellow-50 p-4 rounded-xl shadow-sm border border-yellow-200 text-sm mb-4">
+                        <h3 className="font-bold text-yellow-800 mb-2"><i className="fas fa-cogs mr-1"></i>Pengaturan URL Web App Guru</h3>
+                        <p className="text-slate-600 mb-2">Agar nilai Lab dan Ujian masuk ke Spreadsheet, pastikan URL script Anda sudah dimasukkan di bawah ini:</p>
+                        
+                        {isUrlLocked ? (
+                            <div className="mt-3">
+                                <p className="text-xs text-red-500 mb-2 font-semibold">* URL dikunci agar tidak terubah oleh siswa. Masukkan password untuk mengedit.</p>
+                                <div className="flex gap-2">
+                                    <input type="password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} placeholder="Password (adminspendu)" className="flex-1 p-2 border rounded border-yellow-300 focus:ring focus:ring-yellow-400 outline-none" />
+                                    <button onClick={() => { 
+                                        if(passwordInput === 'adminspendu') {
+                                            setIsUrlLocked(false);
+                                            setPasswordInput('');
+                                        } else {
+                                            setPasswordInput('');
+                                        }
+                                    }} className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded font-bold transition">
+                                        Buka Kunci
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="mt-3 animate-fade-in">
+                                <p className="text-xs text-green-600 mb-2 font-semibold">Buka kunci berhasil. Silakan edit URL Web App di bawah ini:</p>
+                                <input type="text" value={gasUrl} onChange={(e) => setGasUrl(e.target.value)} placeholder="https://script.google.com/macros/s/.../exec" className="w-full p-2 border rounded border-green-300 focus:ring focus:ring-green-400 outline-none mb-3 bg-white font-mono text-xs" />
+                                <button onClick={() => setIsUrlLocked(true)} className="w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded font-bold transition">
+                                    <i className="fas fa-lock mr-2"></i> Kunci & Simpan Pengaturan
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="bg-purple-50 p-4 rounded-xl shadow-sm border border-purple-200 text-sm mb-4">
+                        <h3 className="font-bold text-purple-800 mb-2"><i className="fas fa-key mr-1"></i>Kunci Jawaban & Pembahasan Exam</h3>
+                        <p className="text-slate-600 mb-2">Area ini khusus untuk guru. Masukkan password untuk melihat kunci jawaban dan pembahasan soal ujian.</p>
+                        
+                        {isPembahasanLocked ? (
+                            <div className="mt-3">
+                                <div className="flex gap-2">
+                                    <input type="password" value={pembahasanPassword} onChange={(e) => setPembahasanPassword(e.target.value)} placeholder="Password (adminspendu)" className="flex-1 p-2 border rounded border-purple-300 focus:ring focus:ring-purple-400 outline-none" />
+                                    <button onClick={() => { 
+                                        if(pembahasanPassword === 'adminspendu') {
+                                            setIsPembahasanLocked(false);
+                                            setPembahasanPassword('');
+                                        } else {
+                                            setPembahasanPassword('');
+                                        }
+                                    }} className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded font-bold transition">
+                                        Buka Pembahasan
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="mt-3 animate-fade-in space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                                {questions.map((q, i) => (
+                                    <div key={i} className="bg-white p-4 rounded-xl border border-purple-100 shadow-sm">
+                                        <p className="font-bold text-slate-700 mb-2 whitespace-pre-line">{i+1}. {q.q}</p>
+                                        <div className="bg-green-50 p-2 rounded border border-green-200">
+                                            <p className="text-green-700 font-semibold text-xs md:text-sm">
+                                                <i className="fas fa-check-circle mr-1"></i> Jawaban: {
+                                                    q.type === 'pg' ? q.options[q.a] :
+                                                    q.type === 'tf' ? (q.a === 'true' ? 'BENAR' : 'SALAH') :
+                                                    q.type === 'multi' ? q.a.map(idx => q.options[idx]).join(', ') :
+                                                    q.a
+                                                }
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                                <button onClick={() => setIsPembahasanLocked(true)} className="w-full px-4 py-3 mt-2 bg-purple-500 hover:bg-purple-600 text-white rounded-xl font-bold transition shadow">
+                                    <i className="fas fa-lock mr-2"></i> Kunci Kembali Pembahasan
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="bg-white p-4 rounded-xl shadow-sm border text-sm text-slate-700 space-y-2">
+                        <h3 className="font-bold text-slate-800 border-b pb-2">Panduan Pengumpulan Nilai</h3>
+                        <ol className="list-decimal pl-4 space-y-2">
+                            <li>Pastikan HP siswa terkoneksi internet yang stabil.</li>
+                            <li>Siswa <strong>wajib mengisi Form Login</strong> dengan Nama dan Kelas saat memasuki Fase 3 (Simulasi Lab). Data tersebut dikunci dan dipakai sampai Fase 4 (Exam).</li>
+                            <li>Setelah menyelesaikan input di Simulasi Lab, tekan tombol <strong>"Kumpulkan Analisis"</strong>. Nilai akan otomatis dikirim ke Google Sheets guru dengan keterangan "Simulasi Lab".</li>
+                            <li>Pada Fase Exam, setelah mengerjakan 20 soal, tekan <strong>"Selesai & Kirim"</strong>. Sistem akan mengirim nilai akhir beserta waktu pengerjaan ke Spreadsheet yang sama.</li>
+                        </ol>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="flex flex-col h-full w-full">
+                    {/* Header Top Bar dengan Navigasi Terintegrasi */}
+                    <header className="bg-white px-4 py-3 shadow-sm z-20 flex flex-col sm:flex-row justify-between items-center gap-3 relative">
+                        <div className="flex items-center space-x-2 w-full sm:w-auto justify-center sm:justify-start">
+                            <i className="fas fa-laptop-code text-indigo-600 text-xl md:text-2xl"></i>
+                            <span className="font-bold text-slate-800 text-lg md:text-xl truncate">Berpikir Komputasional</span>
+                        </div>
+                        
+                        <nav className="flex space-x-2 w-full sm:w-auto justify-center bg-slate-50 sm:bg-transparent p-1 sm:p-0 rounded-xl">
+                            <button onClick={() => setView('home')} className={`flex flex-1 sm:flex-none items-center justify-center space-x-2 px-4 py-2 rounded-lg transition ${view === 'home' ? 'bg-indigo-100 text-indigo-700 font-bold shadow-sm' : 'text-slate-500 hover:bg-slate-100 hover:text-indigo-600'}`}>
+                                <i className="fas fa-home"></i>
+                                <span className="text-xs sm:text-sm">Beranda</span>
+                            </button>
+                            <button onClick={() => setView('profile')} className={`flex flex-1 sm:flex-none items-center justify-center space-x-2 px-4 py-2 rounded-lg transition ${view === 'profile' ? 'bg-indigo-100 text-indigo-700 font-bold shadow-sm' : 'text-slate-500 hover:bg-slate-100 hover:text-indigo-600'}`}>
+                                <i className="fas fa-user-tie"></i>
+                                <span className="text-xs sm:text-sm">Profil</span>
+                            </button>
+                            <button onClick={() => setView('guide')} className={`flex flex-1 sm:flex-none items-center justify-center space-x-2 px-4 py-2 rounded-lg transition ${view === 'guide' ? 'bg-indigo-100 text-indigo-700 font-bold shadow-sm' : 'text-slate-500 hover:bg-slate-100 hover:text-indigo-600'}`}>
+                                <i className="fas fa-book"></i>
+                                <span className="text-xs sm:text-sm">Sumber</span>
+                            </button>
+                        </nav>
+                    </header>
+
+                    {/* Main Content Area */}
+                    {view === 'home' && renderHome()}
+                    {view === 'p1' && <Phase1 onComplete={() => { setUnlockedPhase(Math.max(unlockedPhase, 2)); setView('home'); }} />}
+                    {view === 'p2' && <Phase2 onComplete={() => { setUnlockedPhase(Math.max(unlockedPhase, 3)); setView('home'); }} />}
+                    {view === 'p3' && <Phase3 user={user} setUser={setUser} setLabScore={setLabScore} onComplete={() => { setUnlockedPhase(Math.max(unlockedPhase, 4)); setView('home'); }} />}
+                    {view === 'p4' && <Phase4 user={user} labScore={labScore} gasUrl={gasUrl} />}
+                    {view === 'profile' && renderProfile()}
+                    {view === 'guide' && renderGuide()}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
