@@ -174,7 +174,13 @@
             const flashcards = [
                 { term: "Berpikir Komputasional", def: "Cara berpikir logis dan sistematis menyelesaikan masalah layaknya komputer." },
                 { term: "Dekomposisi", def: "Memecah masalah besar menjadi bagian-bagian kecil agar mudah diselesaikan." },
-                { term: "Flowchart", def: "Diagram alir visual yang menggunakan simbol untuk menggambarkan algoritma." },
+                { term: "Pengenalan Pola", def: "Mencari kesamaan atau pola dalam masalah untuk menemukan solusi yang lebih cepat." },
+                { term: "Abstraksi", def: "Fokus hanya pada informasi penting dan mengabaikan detail yang tidak relevan." },
+                { term: "Algoritma", def: "Langkah-langkah logis dan berurutan untuk menyelesaikan suatu masalah." },
+                { term: "Pseudocode", def: "Cara menulis algoritma mirip bahasa manusia agar mudah dibaca, sebelum dikoding." },
+                { term: "Flowchart", def: "Diagram alir visual yang menggunakan simbol standar untuk menggambarkan algoritma." },
+                { term: "Spreadsheet", def: "Aplikasi pengolah angka berupa tabel, contohnya Excel atau Google Sheets." },
+                { term: "Fungsi IF()", def: "Fungsi untuk mengambil keputusan atau mengecek suatu kondisi (Benar/Salah)." },
                 { term: "Ada Lovelace", def: "Programmer pertama di dunia yang menulis algoritma pada tahun 1843." }
             ];
 
@@ -182,18 +188,31 @@
             const [selectedLeft, setSelectedLeft] = useState(null);
             const [selectedRight, setSelectedRight] = useState(null);
             
-            const matchItems = [
+            const [matchItems] = useState(() => [
                 { id: 'l1', text: 'Mencari Rata-rata', match: 'r1' },
                 { id: 'l2', text: 'Simbol Elips Flowchart', match: 'r2' },
                 { id: 'l3', text: 'Simbol Belah Ketupat', match: 'r3' },
                 { id: 'l4', text: 'Fungsi Percabangan', match: 'r4' },
-            ];
-            const matchTargets = [
+                { id: 'l5', text: 'Nilai Tertinggi', match: 'r5' },
+                { id: 'l6', text: 'Nilai Terendah', match: 'r6' },
+                { id: 'l7', text: 'Menghitung Banyak Data', match: 'r7' },
+                { id: 'l8', text: 'Menyaring Data', match: 'r8' },
+                { id: 'l9', text: 'Simbol Jajar Genjang', match: 'r9' },
+                { id: 'l10', text: 'Simbol Persegi', match: 'r10' }
+            ].sort(() => Math.random() - 0.5));
+
+            const [matchTargets] = useState(() => [
                 { id: 'r2', text: 'Terminator (Mulai/Selesai)' },
                 { id: 'r4', text: 'Fungsi IF()' },
                 { id: 'r1', text: 'AVERAGE()' },
                 { id: 'r3', text: 'Decision (Keputusan)' },
-            ];
+                { id: 'r5', text: 'MAX()' },
+                { id: 'r6', text: 'MIN()' },
+                { id: 'r7', text: 'COUNT()' },
+                { id: 'r8', text: 'FILTER()' },
+                { id: 'r9', text: 'Input / Output' },
+                { id: 'r10', text: 'Proses (Tindakan)' }
+            ].sort(() => Math.random() - 0.5));
 
             const handleNextFC = () => {
                 if (!fcFlipped) {
@@ -224,7 +243,7 @@
                         setStars(s => s + 15);
                         setSelectedLeft(null); setSelectedRight(null);
                         
-                        if (matches.length === 3) { // 3 + this 1 = 4
+                        if (matches.length === 9) { // 9 + current 1 = 10
                             setTimeout(() => {
                                 setModal({ isOpen: true, title: "Fase 2 Selesai!", message: "Poin penuh! Kamu berhak masuk ke Simulasi Lab." });
                                 onComplete();
@@ -307,21 +326,51 @@
             const [isLogged, setIsLogged] = useState(user.name !== '');
             const [submitted, setSubmitted] = useState(false);
             
+            // Timer Lab
+            const [timeElapsed, setTimeElapsed] = useState(0);
+            
             // Lab States
             const [step, setStep] = useState(1);
             
-            // Data Acak 60 - 100
+            // Data Acak 60 - 100 (10 Data)
             const [raw] = useState(() => {
                 const r = [];
-                for(let i=0; i<5; i++) r.push(Math.floor(Math.random() * 41) + 60);
+                for(let i=0; i<10; i++) r.push(Math.floor(Math.random() * 41) + 60);
                 return r;
             });
+            const studentNames = ['Ali', 'Budi', 'Citra', 'Dina', 'Eko', 'Fani', 'Gita', 'Hadi', 'Indra', 'Joko'];
             
-            const [tableData, setTableData] = useState(['', '', '', '', '']);
-            const formulaCards = ['=MAX(B1:B5)', '=MIN(B1:B5)', '=AVERAGE(B1:B5)', '=COUNT(B1:B5)'];
-            const [slots, setSlots] = useState({ max: '', min: '', avg: '', count: '' });
+            const [tableData, setTableData] = useState(Array(10).fill(''));
+            
+            // 7 Rumus
+            const formulaTargets = [
+                { id: 'max', label: 'Mencari Nilai Tertinggi Kelas', text: '=MAX(B1:B10)' },
+                { id: 'min', label: 'Mencari Nilai Terendah Kelas', text: '=MIN(B1:B10)' },
+                { id: 'avg', label: 'Menghitung Rata-rata Kelas', text: '=AVERAGE(B1:B10)' },
+                { id: 'count', label: 'Menghitung Jumlah Siswa', text: '=COUNT(B1:B10)' },
+                { id: 'sum', label: 'Total Seluruh Nilai Kelas', text: '=SUM(B1:B10)' },
+                { id: 'pass', label: 'Banyaknya Siswa Tuntas (Nilai >= 75)', text: '=COUNTIF(B1:B10, ">=75")' },
+                { id: 'fail', label: 'Banyaknya Siswa Remedial (Nilai < 75)', text: '=COUNTIF(B1:B10, "<75")' }
+            ];
+
+            const [shuffledCards] = useState(() => [...formulaTargets].sort(() => Math.random() - 0.5));
+            const [slots, setSlots] = useState({ max: '', min: '', avg: '', count: '', sum: '', pass: '', fail: '' });
             const [activeCard, setActiveCard] = useState(null);
-            const [calc, setCalc] = useState({ max: '', min: '', avg: '', count: '' });
+            const [calc, setCalc] = useState({ max: '', min: '', avg: '', count: '', sum: '', pass: '', fail: '' });
+
+            useEffect(() => {
+                let timer;
+                if (isLogged && !submitted && !user.labDone) {
+                    timer = setInterval(() => setTimeElapsed(t => t + 1), 1000);
+                }
+                return () => clearInterval(timer);
+            }, [isLogged, submitted, user.labDone]);
+
+            const formatTime = (seconds) => {
+                const m = Math.floor(seconds / 60);
+                const s = seconds % 60;
+                return `${m}m ${s}s`;
+            };
 
             const handleLogin = (e) => {
                 e.preventDefault();
@@ -329,7 +378,7 @@
                 const k = e.target.kelas.value;
                 const s = e.target.sekolah.value;
                 if(n && k && s) {
-                    setUser({ name: n, class: k, school: s });
+                    setUser({ name: n, class: k, school: s, labDone: false, examDone: false });
                     setIsLogged(true);
                 } else {
                     setModal({ isOpen: true, title: 'Error', message: 'Harap isi semua data.'});
@@ -340,7 +389,7 @@
                 const isCorrect = tableData.every((val, i) => parseInt(val) === raw[i]);
                 if (isCorrect) {
                     setStep(2);
-                    setModal({ isOpen: true, title: 'Hebat!', message: 'Data berhasil dimasukkan ke tabel dengan benar. Lanjut pasang rumusnya!'});
+                    setModal({ isOpen: true, title: 'Hebat!', message: '10 Data berhasil dimasukkan ke tabel dengan benar. Lanjut pasang rumusnya!'});
                 } else {
                     setModal({ isOpen: true, title: 'Cek Lagi!', message: 'Pastikan angka yang kamu masukkan persis dengan urutan Data Mentah.' });
                 }
@@ -356,34 +405,57 @@
             };
 
             const verifyStep2 = () => {
-                if (slots.max === '=MAX(B1:B5)' && slots.min === '=MIN(B1:B5)' && slots.avg === '=AVERAGE(B1:B5)' && slots.count === '=COUNT(B1:B5)') {
+                const isAllCorrect = formulaTargets.every(ft => slots[ft.id] === ft.text);
+                if (isAllCorrect) {
                     setStep(3);
-                    setModal({ isOpen: true, title: 'Luar Biasa!', message: 'Semua rumus ditempatkan di sel yang tepat. Sekarang mari hitung hasilnya manual sebagai tantangan!'});
+                    setModal({ isOpen: true, title: 'Luar Biasa!', message: 'Semua 7 rumus ditempatkan di sel yang tepat. Sekarang mari hitung hasilnya manual sebagai tantangan!'});
                 } else {
                     setModal({ isOpen: true, title: 'Ada yang salah', message: 'Penempatan kartu rumus belum tepat. Coba periksa kembali kegunaan setiap fungsi.' });
                 }
             };
 
             const checkLab = () => {
-                let score = 20; // Poin dasar lulus step 1 & 2
+                let score = 30; // Poin dasar lulus step 1 & 2
                 
                 const actualMax = Math.max(...raw);
                 const actualMin = Math.min(...raw);
                 const actualAvg = Math.round(raw.reduce((a,b)=>a+b, 0) / raw.length);
                 const actualCount = raw.length;
+                const actualSum = raw.reduce((a,b)=>a+b, 0);
+                const actualPass = raw.filter(x => x >= 75).length;
+                const actualFail = raw.filter(x => x < 75).length;
 
                 let correctCalc = 0;
                 if (parseInt(calc.max) === actualMax) correctCalc++;
                 if (parseInt(calc.min) === actualMin) correctCalc++;
                 if (parseInt(calc.avg) === actualAvg) correctCalc++;
                 if (parseInt(calc.count) === actualCount) correctCalc++;
+                if (parseInt(calc.sum) === actualSum) correctCalc++;
+                if (parseInt(calc.pass) === actualPass) correctCalc++;
+                if (parseInt(calc.fail) === actualFail) correctCalc++;
                 
-                score += (correctCalc * 20); // max 80 + 20 = 100
+                score += (correctCalc * 10); // max 70 + 30 = 100
 
                 setLabScore(score);
                 setSubmitted(true);
-                setModal({ isOpen: true, title: 'Lab Selesai!', message: `Kamu berhasil menganalisis data. Nilai Lab kamu: ${score}. Nilai siap dikirim, mari lanjut ke Ujian Akhir!`});
+                setUser(prev => ({...prev, labDone: true}));
+                setModal({ isOpen: true, title: 'Lab Selesai!', message: `Kamu berhasil menganalisis data. Nilai Lab: ${score} (Waktu: ${formatTime(timeElapsed)}). Nilai siap dikirim!`});
             };
+
+            if (user.labDone) {
+                return (
+                    <div className="flex-1 overflow-y-auto p-5 slide-up w-full flex flex-col items-center justify-center">
+                        <div className="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-green-500 text-center max-w-md">
+                            <i className="fas fa-check-circle text-5xl text-green-500 mb-4"></i>
+                            <h2 className="text-2xl font-bold text-slate-800 mb-2">Simulasi Selesai</h2>
+                            <p className="text-slate-600 mb-6">Kamu sudah mengerjakan Simulasi Lab sebelumnya. Kamu hanya diizinkan mencoba satu kali. Silakan lanjut ke Fase Exam.</p>
+                            <button onClick={onComplete} className="w-full py-3 bg-green-500 text-white rounded-xl font-bold shadow hover:bg-green-600">
+                                Lanjut ke Exam <i className="fas fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
 
             if (!isLogged) {
                 return (
@@ -429,19 +501,20 @@
                         </div>
 
                         {/* PROGRESS BAR LAB */}
-                        <div className="flex items-center space-x-2 mb-6 text-xs md:text-sm font-bold text-slate-500">
-                            <div className={`flex-1 p-2 rounded text-center transition-colors ${step >= 1 ? 'bg-purple-100 text-purple-700 border border-purple-200 shadow-sm' : 'bg-slate-100'}`}>1. Input Data</div>
-                            <div className={`flex-1 p-2 rounded text-center transition-colors ${step >= 2 ? 'bg-purple-100 text-purple-700 border border-purple-200 shadow-sm' : 'bg-slate-100'}`}>2. Rumus</div>
-                            <div className={`flex-1 p-2 rounded text-center transition-colors ${step >= 3 ? 'bg-purple-100 text-purple-700 border border-purple-200 shadow-sm' : 'bg-slate-100'}`}>3. Analisis</div>
+                        <div className="flex flex-wrap items-center gap-2 mb-6 text-xs md:text-sm font-bold text-slate-500">
+                            <div className={`flex-1 min-w-[100px] p-2 rounded text-center transition-colors ${step >= 1 ? 'bg-purple-100 text-purple-700 border border-purple-200 shadow-sm' : 'bg-slate-100'}`}>1. Input Data (10)</div>
+                            <div className={`flex-1 min-w-[100px] p-2 rounded text-center transition-colors ${step >= 2 ? 'bg-purple-100 text-purple-700 border border-purple-200 shadow-sm' : 'bg-slate-100'}`}>2. Rumus (7)</div>
+                            <div className={`flex-1 min-w-[100px] p-2 rounded text-center transition-colors ${step >= 3 ? 'bg-purple-100 text-purple-700 border border-purple-200 shadow-sm' : 'bg-slate-100'}`}>3. Analisis</div>
+                            <div className="p-2 bg-slate-800 text-white rounded shadow-sm text-center font-mono w-full md:w-20"><i className="far fa-clock"></i> {formatTime(timeElapsed)}</div>
                         </div>
 
                         {step === 1 && (
                             <div className="bg-white rounded-xl shadow-sm border p-4 md:p-8 mb-6 animate-fade-in">
-                                <h3 className="font-bold text-slate-700 mb-3 border-b pb-2 md:text-lg">Langkah 1: Input Data Mentah</h3>
+                                <h3 className="font-bold text-slate-700 mb-3 border-b pb-2 md:text-lg">Langkah 1: Input Data Mentah (10 Siswa)</h3>
                                 <p className="text-sm md:text-base text-slate-600 mb-4">Guru memberikan data nilai secara acak: 
                                     <span className="inline-block font-mono font-bold text-indigo-600 bg-indigo-50 px-3 py-1 ml-2 rounded border border-indigo-200 shadow-sm">{raw.join(', ')}</span>
                                 </p>
-                                <p className="text-sm text-slate-600 mb-4 bg-yellow-50 p-3 rounded border border-yellow-200"><i className="fas fa-lightbulb text-yellow-500 mr-2"></i>Tugas: Masukkan kelima data nilai di atas secara berurutan ke dalam tabel kolom B!</p>
+                                <p className="text-sm text-slate-600 mb-4 bg-yellow-50 p-3 rounded border border-yellow-200"><i className="fas fa-lightbulb text-yellow-500 mr-2"></i>Tugas: Masukkan ke-10 data nilai di atas secara berurutan ke dalam tabel kolom B!</p>
                                 
                                 <div className="overflow-x-auto">
                                     <table className="w-full min-w-[300px] text-center text-sm md:text-base mb-6 border">
@@ -449,7 +522,7 @@
                                             <tr className="bg-slate-100"><th className="border p-2 w-16">Sel</th><th className="border p-2">A (Nama)</th><th className="border p-2 w-1/2">B (Nilai)</th></tr>
                                         </thead>
                                         <tbody>
-                                            {['Ali', 'Budi', 'Citra', 'Dina', 'Eko'].map((name, i) => (
+                                            {studentNames.map((name, i) => (
                                                 <tr key={i}>
                                                     <td className="border p-2 bg-slate-50 font-mono text-slate-500">{i+1}</td>
                                                     <td className="border p-2 text-left px-4 font-semibold text-slate-700">{name}</td>
@@ -477,13 +550,13 @@
                                 <p className="text-sm md:text-base text-slate-600 mb-4 bg-blue-50 p-3 rounded border border-blue-200"><i className="fas fa-hand-pointer text-blue-500 mr-2"></i><strong>Tap & Match:</strong> Ketuk kartu rumus di kotak abu-abu, lalu ketuk sel target di tabel bawahnya!</p>
                                 
                                 <div className="flex flex-wrap gap-2 md:gap-4 justify-center mb-6 p-4 md:p-6 bg-slate-100 rounded-xl border border-dashed border-slate-300 min-h-[100px] items-center">
-                                    {formulaCards.map(fc => {
-                                        const isPlaced = Object.values(slots).includes(fc);
+                                    {shuffledCards.map(fc => {
+                                        const isPlaced = Object.values(slots).includes(fc.text);
                                         if (isPlaced) return null;
                                         return (
-                                            <button key={fc} onClick={() => setActiveCard(activeCard === fc ? null : fc)}
-                                                className={`px-4 py-3 text-sm md:text-base font-mono font-bold rounded-xl border-2 transition-transform ${activeCard === fc ? 'bg-indigo-500 border-indigo-700 text-white scale-110 shadow-lg' : 'bg-white border-indigo-300 text-indigo-700 shadow-sm hover:bg-indigo-50'}`}>
-                                                {fc}
+                                            <button key={fc.id} onClick={() => setActiveCard(activeCard === fc.text ? null : fc.text)}
+                                                className={`px-4 py-3 text-sm md:text-base font-mono font-bold rounded-xl border-2 transition-transform ${activeCard === fc.text ? 'bg-indigo-500 border-indigo-700 text-white scale-110 shadow-lg' : 'bg-white border-indigo-300 text-indigo-700 shadow-sm hover:bg-indigo-50'}`}>
+                                                {fc.text}
                                             </button>
                                         )
                                     })}
@@ -496,12 +569,7 @@
                                             <tr className="bg-slate-100"><th className="border p-2">Deskripsi Tujuan</th><th className="border p-2">Sel Rumus (Tap di sini)</th></tr>
                                         </thead>
                                         <tbody>
-                                            {[
-                                                { id: 'max', label: 'Mencari Nilai Tertinggi Kelas' },
-                                                { id: 'min', label: 'Mencari Nilai Terendah Kelas' },
-                                                { id: 'avg', label: 'Menghitung Rata-rata Kelas' },
-                                                { id: 'count', label: 'Menghitung Jumlah Siswa' }
-                                            ].map(row => (
+                                            {formulaTargets.map(row => (
                                                 <tr key={row.id}>
                                                     <td className="border p-3 bg-slate-50 font-semibold text-left px-4 w-1/2 text-slate-700">{row.label}</td>
                                                     <td className="border p-2 bg-indigo-50/30">
@@ -533,24 +601,19 @@
                                 <p className="text-sm md:text-base text-slate-600 mb-4 bg-purple-50 p-3 rounded border border-purple-200"><i className="fas fa-brain text-purple-500 mr-2"></i>Berdasarkan <strong>data yang kamu input</strong> di Langkah 1, jika komputer mengeksekusi rumus tersebut, berapakah hasil yang akan keluar? Hitung manual!</p>
                                 
                                 <div className="flex flex-col md:flex-row gap-6 mb-6">
-                                    <div className="md:w-1/3 bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-inner">
+                                    <div className="md:w-1/3 bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-inner max-h-80 overflow-y-auto custom-scrollbar">
                                         <p className="text-xs md:text-sm font-bold text-slate-500 mb-3 border-b pb-2">Tabel Data Kamu:</p>
                                         <ul className="text-sm md:text-base font-mono space-y-2 text-slate-700">
-                                            {raw.map((r,i) => <li key={i} className="flex justify-between"><span>B{i+1} ({['Ali', 'Budi', 'Citra', 'Dina', 'Eko'][i]})</span> <span className="font-bold">{r}</span></li>)}
+                                            {raw.map((r,i) => <li key={i} className="flex justify-between"><span>B{i+1} ({studentNames[i]})</span> <span className="font-bold">{r}</span></li>)}
                                         </ul>
                                     </div>
                                     
                                     <div className="md:w-2/3 space-y-4 bg-white p-5 rounded-xl border border-slate-200">
-                                        {[
-                                            { id: 'max', label: '=MAX(B1:B5)', desc: 'Nilai Tertinggi' },
-                                            { id: 'min', label: '=MIN(B1:B5)', desc: 'Nilai Terendah' },
-                                            { id: 'avg', label: '=AVERAGE(B1:B5)', desc: 'Rata-rata (Bulatkan)' },
-                                            { id: 'count', label: '=COUNT(B1:B5)', desc: 'Jumlah Siswa' }
-                                        ].map(row => (
+                                        {formulaTargets.map(row => (
                                             <div key={row.id} className="flex items-center justify-between border-b border-slate-100 pb-3">
-                                                <div>
-                                                    <p className="text-sm md:text-base font-mono font-bold text-indigo-700">{row.label}</p>
-                                                    <p className="text-xs text-slate-500">{row.desc}</p>
+                                                <div className="pr-2">
+                                                    <p className="text-sm md:text-base font-mono font-bold text-indigo-700">{row.text}</p>
+                                                    <p className="text-xs text-slate-500">{row.label}</p>
                                                 </div>
                                                 <input type="number" value={calc[row.id]} onChange={e=>setCalc({...calc, [row.id]: e.target.value})} className="border-2 border-slate-300 p-2 md:p-3 w-24 md:w-32 text-center rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none font-mono text-lg transition-all" placeholder="Hasil" />
                                             </div>
@@ -571,7 +634,7 @@
         };
 
         const questions = [
-            { id: 1, type: 'pg', q: "Perhatikan pernyataan berikut.\n(1) cara cepat mengoperasikan komputer\n(2) menyelesaikan masalah dengan langkah-langkah sistematis\n(3) teknik menggambar menggunakan komputer\n(4) pengolahan data secara sistematis\n\nPernyataan yang tepat mengenai berpikir komputasional adalah ....", options: ["(1) dan (3)", "(2) dan (3)", "(2) dan (4)", "(3) dan (4)"], a: 2 },
+            { id: 1, type: 'pg', q: "Perhatikan pernyataan berikut.\n(1) cara cepat mengoperasikan komputer\n(2) menyelesaikan masalah dengan langkah-langkah sistematis\n(3) teknik menggambar menggunakan komputer\n(4) pengolahan data secara sistematis\n\nPernyataan yang tepat mengenai berpikir komputasional adalah ....", options: ["(1) dan 3", "(2) dan 3", "(2) dan (4)", "(3) dan (4)"], a: 2 },
             { id: 2, type: 'pg', q: "Pengolahan data membutuhkan beberapa fungsi untuk membantu mengolah data dengan cepat dan akurat. Dalam pengolahan data, fungsi AVERAGE digunakan untuk ....", options: ["mencari nilai terkecil", "menjumlahkan seluruh data", "mencari nilai rata-rata", "menghapus data duplikat"], a: 2 },
             { id: 3, type: 'pg', q: "Prinsip berpikir komputasional sangat diperlukan saat melakukan pengolahan data. Berikut yang termasuk prinsip berpikir komputasional adalah ....", options: ["menyalin file dari computer", "menyusun langkah-langkah sistematis", "mengetik dokumen", "menonton video pembelajaran"], a: 1 },
             { id: 4, type: 'pg', q: "Perhatikan beberapa fungsi dasar pada spreadsheet berikut.\n(1) COUNT\n(2) AVERAGE\n(3) MAX\n(4) SUM\n\nDeni ingin menghitung rata-rata dan menentukan nilai tertinggi dari data nilai ulangan IPA teman-teman sekelasnya menggunakan spreadsheet. Fungsi yang dapat digunakan oleh Deni adalah ....", options: ["(1) dan (3)", "(2) dan (3)", "(2) dan (4)", "(3) dan (4)"], a: 1 },
@@ -581,19 +644,19 @@
             { id: 8, type: 'pg', q: "Spreadsheet memiliki beberapa fungsi dasar yang bermanfaat untuk pengolahan data salah satunya adalah fungsi COUNT. Fungsi COUNT dalam spreadsheet digunakan untuk ....", options: ["menjumlahkan seluruh kolom", "menghitung banyaknya data numerik", "menghapus semua data", "menyalin data antarsheet"], a: 1 },
             { id: 9, type: 'pg', q: "Perhatikan pseudocode berikut.\n\nMulai\nMasukkan nilai_matematika\nMasukkan nilai_ipa\nMasukkan nilai_bahasa\nJumlah = nilai_matematika + nilai_bahasa + nilai_ipa\nRata_rata = Jumlah / 3\nJika Rata_rata >= 75\n  Tampilkan \"Lulus\"\nJika Rata_rata >= 60\n  Tampilkan \"Mengulang\"\nJika tidak\n  Tampilkan \"Tidak Lulus\"\nSelesai\n\nSeorang siswa mendapatkan nilai Matematika: 70, IPA: 80, Bahasa: 65. Berdasarkan pseudocode di atas, status kelulusan siswa tersebut dan alasannya adalah ...", options: ["Lulus, karena rata-ratanya 71.67 lebih besar dari 60 dan memenuhi kriteria pertama.", "Mengulang, karena rata-ratanya 71.67 tidak mencapai 75 tetapi lebih dari atau sama dengan 60.", "Tidak lulus, karena rata-ratanya 71.67 tidak mencapai 75 dan juga tidak mencapai 60.", "Lulus, karena nilai IPA-nya yang tinggi sudah cukup untuk membuatnya lulus."], a: 1 },
             { id: 10, type: 'pg', q: "Perhatikan pseudocode berikut.\n\nMulai\nTampilkan \"Pilih menu: 1 = Nasi Goreng, 2 = Mie Ayam\"\nMasukkan pilihan\nJika pilihan = 1\n  Tampilkan \"Kamu memilih Nasi Goreng\"\nJika pilihan = 2\n  Tampilkan \"Kamu memilih Mie Ayam\"\nJika tidak\n  Tampilkan \"Pilihan tidak tersedia\"\nSelesai\n\nSimbol flowchart yang digunakan untuk membuat logika percabangan pseudocode tersebut adalah ....", options: ["terminator dan proses", "terminator dan input", "input dan proses", "input dan decisions"], a: 3 },
-            { id: 11, type: 'tf', q: "Spreadsheet pertama dibuat pada tahun 1979 dengan nama VisiCalc.", a: 'true' },
-            { id: 12, type: 'pg', q: "Fokus hanya pada data penting dan mengabaikan yang tidak relevan disebut...", options: ["Dekomposisi", "Pengenalan Pola", "Abstraksi", "Algoritma"], a: 2 },
-            { id: 13, type: 'pg', q: "Langkah-langkah logis dan berurutan untuk menyelesaikan masalah disebut...", options: ["Algoritma", "Spreadsheet", "Data", "Variabel"], a: 0 },
-            { id: 14, type: 'pg', q: "Fungsi yang digunakan untuk mengecek kondisi (misal: Lulus/Remedial) adalah...", options: ["=FILTER()", "=SORT()", "=IF()", "=AVERAGE()"], a: 2 },
-            { id: 15, type: 'pg', q: "Visualisasi data mana yang paling cocok untuk melihat tren dari waktu ke waktu?", options: ["Pie Chart", "Diagram Garis", "Diagram Batang", "Flowchart"], a: 1 },
-            { id: 16, type: 'multi', q: "Manakah yang termasuk struktur kontrol dalam Pseudocode? (Pilih 3)", options: ["Urutan (Sequence)", "Visualisasi", "Percabangan (Selection)", "Pengulangan (Looping)"], a: [0, 2, 3] },
-            { id: 17, type: 'text', q: "Isian Singkat: Simbol belah ketupat pada flowchart berfungsi untuk pengambilan...", a: "keputusan" },
-            { id: 18, type: 'tf', q: "Pseudocode adalah kode yang dapat langsung dijalankan oleh komputer.", a: 'false' },
-            { id: 19, type: 'pg', q: "Simbol elips pada flowchart (Terminator) digunakan untuk...", options: ["Proses", "Input / Output", "Awal (Start) & Akhir (End)", "Pengambilan Keputusan"], a: 2 },
+            { id: 11, type: 'pg', q: "Kontekstual: Di kantin sekolah, Budi melihat daftar harga makanan. Budi ingin membeli makanan dengan harga termurah. Jika daftar harga disimpan dalam sel C2 hingga C10 di spreadsheet, fungsi apa yang paling tepat digunakan Budi untuk menemukan harga termurah secara otomatis?", options: ["=AVERAGE(C2:C10)", "=MIN(C2:C10)", "=MAX(C2:C10)", "=COUNT(C2:C10)"], a: 1 },
+            { id: 12, type: 'pg', q: "Kontekstual: OSIS mengadakan pemilihan ketua. Ada 3 kandidat. Panitia menggunakan spreadsheet untuk mendata suara sah berupa angka urut pemilih. Jika panitia ingin mengetahui total seluruh siswa yang memberikan suara pada kolom A (baris 2 sampai 150), fungsi apakah yang harus digunakan?", options: ["=MAX(A2:A150)", "=SUM(A2:A150)", "=COUNT(A2:A150)", "=SORT(A2:A150)"], a: 2 },
+            { id: 13, type: 'multi', q: "Kontekstual: Dina ditugaskan mengelompokkan buku perpustakaan yang rusak. Ia memecah tugas menjadi: (1) mendata semua buku, (2) memisahkan rak buku fiksi dan non-fiksi, (3) mengecek kondisi fisik satu per satu. Tindakan memecah masalah besar menjadi kecil ini termasuk pilar berpikir komputasional apa?", options: ["Dekomposisi", "Abstraksi", "Menyusun Algoritma", "Pengenalan Pola"], a: [0] },
+            { id: 14, type: 'tf', q: "Spreadsheet pertama dibuat pada tahun 1979 dengan nama VisiCalc.", a: 'true' },
+            { id: 15, type: 'pg', q: "Fokus hanya pada data penting dan mengabaikan yang tidak relevan disebut...", options: ["Dekomposisi", "Pengenalan Pola", "Abstraksi", "Algoritma"], a: 2 },
+            { id: 16, type: 'pg', q: "Fungsi yang digunakan untuk mengecek kondisi (misal: Lulus/Remedial) adalah...", options: ["=FILTER()", "=SORT()", "=IF()", "=AVERAGE()"], a: 2 },
+            { id: 17, type: 'multi', q: "Manakah yang termasuk struktur kontrol dalam Pseudocode? (Pilih 3)", options: ["Urutan (Sequence)", "Visualisasi", "Percabangan (Selection)", "Pengulangan (Looping)"], a: [0, 2, 3] },
+            { id: 18, type: 'text', q: "Isian Singkat: Simbol belah ketupat pada flowchart berfungsi untuk pengambilan...", a: "keputusan" },
+            { id: 19, type: 'tf', q: "Pseudocode adalah kode yang dapat langsung dijalankan oleh komputer tanpa perlu bahasa pemrograman lain.", a: 'false' },
             { id: 20, type: 'text', q: "Isian Singkat: Fungsi spreadsheet untuk mencari nilai tertinggi adalah...", a: "max" }
         ];
 
-        const Phase4 = ({ user, labScore, gasUrl }) => {
+        const Phase4 = ({ user, setUser, labScore, gasUrl, onGoHome }) => {
             const [qIndex, setQIndex] = useState(0);
             const [userAnswers, setUserAnswers] = useState({});
             const [isFinished, setIsFinished] = useState(false);
@@ -604,11 +667,26 @@
 
             useEffect(() => {
                 let timer;
-                if (!isFinished) {
+                if (!isFinished && !user.examDone) {
                     timer = setInterval(() => setTimeElapsed(t => t + 1), 1000);
                 }
                 return () => clearInterval(timer);
-            }, [isFinished]);
+            }, [isFinished, user.examDone]);
+
+            if (user.examDone) {
+                 return (
+                    <div className="flex-1 overflow-y-auto p-5 slide-up w-full flex flex-col items-center justify-center">
+                        <div className="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-red-500 text-center max-w-md">
+                            <i className="fas fa-lock text-5xl text-red-500 mb-4"></i>
+                            <h2 className="text-2xl font-bold text-slate-800 mb-2">Ujian Telah Diselesaikan</h2>
+                            <p className="text-slate-600 mb-6">Kamu sudah mengerjakan dan mengirimkan nilai Ujian Akhir. Kamu hanya diizinkan mencoba satu kali.</p>
+                            <button onClick={onGoHome} className="w-full py-3 bg-red-500 text-white rounded-xl font-bold shadow hover:bg-red-600">
+                                Kembali ke Beranda
+                            </button>
+                        </div>
+                    </div>
+                 );
+            }
 
             const handleAnswer = (val) => {
                 setUserAnswers({ ...userAnswers, [qIndex]: val });
@@ -647,6 +725,7 @@
                 const score = calculateScore();
                 setFinalScore(score);
                 setIsFinished(true);
+                setUser(prev => ({...prev, examDone: true}));
                 submitData(score);
             };
 
@@ -795,11 +874,11 @@
         const App = () => {
             const [view, setView] = useState('home'); // home, p1, p2, p3, p4, profile, guide
             const [unlockedPhase, setUnlockedPhase] = useState(1);
-            const [user, setUser] = useState({ name: '', class: '', school: '' });
+            const [user, setUser] = useState({ name: '', class: '', school: '', labDone: false, examDone: false });
             const [labScore, setLabScore] = useState(0);
             
             // GANTI URL INI DENGAN URL WEB APP GOOGLE SCRIPT ANDA
-            const [gasUrl, setGasUrl] = useState("https://script.google.com/macros/s/AKfycbwqTzpQQ7XAooJqIzhEUVvOaEDctSPuW7n43pETQf_JbtQh2eyQCCJCgKmCycopH4c0sw/exec"); 
+            const [gasUrl, setGasUrl] = useState("https://script.google.com/macros/s/AKfycbzL5.../exec"); 
             const [isUrlLocked, setIsUrlLocked] = useState(true);
             const [passwordInput, setPasswordInput] = useState('');
             
@@ -999,7 +1078,7 @@
                     {view === 'p1' && <Phase1 onComplete={() => { setUnlockedPhase(Math.max(unlockedPhase, 2)); setView('home'); }} />}
                     {view === 'p2' && <Phase2 onComplete={() => { setUnlockedPhase(Math.max(unlockedPhase, 3)); setView('home'); }} />}
                     {view === 'p3' && <Phase3 user={user} setUser={setUser} setLabScore={setLabScore} onComplete={() => { setUnlockedPhase(Math.max(unlockedPhase, 4)); setView('home'); }} />}
-                    {view === 'p4' && <Phase4 user={user} labScore={labScore} gasUrl={gasUrl} />}
+                    {view === 'p4' && <Phase4 user={user} setUser={setUser} labScore={labScore} gasUrl={gasUrl} onGoHome={() => setView('home')} />}
                     {view === 'profile' && renderProfile()}
                     {view === 'guide' && renderGuide()}
                 </div>
