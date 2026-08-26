@@ -878,6 +878,27 @@
             const [passwordInput, setPasswordInput] = useState('');
             const [isPembahasanLocked, setIsPembahasanLocked] = useState(true);
             const [pembahasanPassword, setPembahasanPassword] = useState('');
+            const [isFullscreen, setIsFullscreen] = useState(false);
+
+            useEffect(() => {
+                const handleFullscreenChange = () => {
+                    setIsFullscreen(!!document.fullscreenElement);
+                };
+                document.addEventListener('fullscreenchange', handleFullscreenChange);
+                return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            }, []);
+
+            const toggleFullScreen = () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                    });
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            };
 
             const renderHome = () => (
                 <div className="flex-1 overflow-y-auto p-4 md:p-10 pb-8 slide-up flex flex-col items-center w-full custom-scrollbar">
@@ -1053,9 +1074,14 @@
             return (
                 <div className="flex flex-col h-full w-full">
                     <header className="bg-white px-4 py-3 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex flex-col sm:flex-row justify-between items-center gap-3 relative">
-                        <div className="flex items-center space-x-2 w-full sm:w-auto justify-center sm:justify-start">
-                            <i className="fas fa-laptop-code text-indigo-600 text-xl md:text-2xl"></i>
-                            <span className="font-bold text-slate-800 text-lg md:text-xl truncate">Berpikir Komputasional</span>
+                        <div className="flex items-center w-full sm:w-auto justify-center sm:justify-start relative">
+                            <div className="flex items-center space-x-2">
+                                <i className="fas fa-laptop-code text-indigo-600 text-xl md:text-2xl"></i>
+                                <span className="font-bold text-slate-800 text-lg md:text-xl truncate">Berpikir Komputasional</span>
+                            </div>
+                            <button onClick={toggleFullScreen} className="absolute right-0 sm:hidden text-slate-500 hover:text-indigo-600 bg-slate-100 p-2 rounded-lg shadow-sm border border-slate-200 w-9 h-9 flex items-center justify-center transition">
+                                <i className={`fas ${isFullscreen ? 'fa-compress' : 'fa-expand'}`}></i>
+                            </button>
                         </div>
                         
                         <nav className="flex space-x-2 w-full sm:w-auto justify-center bg-slate-50 sm:bg-transparent p-1 sm:p-0 rounded-xl border sm:border-none border-slate-200">
@@ -1070,6 +1096,9 @@
                             <button onClick={() => setView('guide')} className={`flex flex-1 sm:flex-none items-center justify-center space-x-2 px-3 md:px-4 py-2 rounded-lg transition ${view === 'guide' ? 'bg-indigo-100 text-indigo-700 font-bold shadow-sm' : 'text-slate-500 hover:bg-slate-100 hover:text-indigo-600'}`}>
                                 <i className="fas fa-book"></i>
                                 <span className="text-xs sm:text-sm">Sumber</span>
+                            </button>
+                            <button onClick={toggleFullScreen} title="Toggle Fullscreen" className="hidden sm:flex flex-none items-center justify-center w-10 py-2 rounded-lg transition text-slate-500 hover:bg-slate-100 hover:text-indigo-600 bg-white border border-slate-200 shadow-sm ml-1">
+                                <i className={`fas ${isFullscreen ? 'fa-compress' : 'fa-expand'}`}></i>
                             </button>
                         </nav>
                     </header>
