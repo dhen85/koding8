@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koding kelas 8</title>
+    <title>Menemukan Solusi dengan Berpikir Komputasional</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
@@ -1081,6 +1081,10 @@
                     {view === 'p4' && <Phase4 user={user} labScore={labScore} labTime={labTime} gasUrl={gasUrl} />}
                     {view === 'profile' && renderProfile()}
                     {view === 'guide' && renderGuide()}
+
+                    <footer className="w-full bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-500 z-30 shrink-0">
+                        media pembelajarn interaktif koding kelas 8 by pagurudan &amp; AI
+                    </footer>
                 </div>
             );
         };
