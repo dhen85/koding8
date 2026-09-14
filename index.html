@@ -8,6 +8,7 @@
     <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -396,19 +397,6 @@
             };
 
             const checkLab = () => {
-                const checkKeyLab = `lab_${user.name}_${user.class}_${user.school}`.toLowerCase();
-                
-                if (localStorage.getItem(checkKeyLab)) {
-                    setLabScore(localStorage.getItem(checkKeyLab + '_score') || 0);
-                    setSubmitted(true);
-                    setModal({ 
-                        isOpen: true, 
-                        title: 'Sudah Mengerjakan', 
-                        message: 'Simulasi selesai. Kamu sudah mengerjakan simulasi lab sebelumnya.\n\nKamu hanya diizinkan mencoba satu kali.'
-                    });
-                    return;
-                }
-
                 let score = 20;
                 const actualMax = Math.max(...raw);
                 const actualMin = Math.min(...raw);
@@ -437,14 +425,11 @@
                 setLabScore(score);
                 setLabTime(finalTime);
                 setSubmitted(true);
-                
-                localStorage.setItem(checkKeyLab, 'true');
-                localStorage.setItem(checkKeyLab + '_score', score);
 
                 setModal({ 
                     isOpen: true, 
                     title: 'Lab Selesai!', 
-                    message: `Kamu berhasil menganalisis data.\n\nNilai Lab kamu: ${score}\nWaktu pengerjaan: ${finalTime}\n\nNilai siap dikirim, mari lanjut ke Ujian Akhir!`
+                    message: `Kamu berhasil menganalisis data.\n\nNilai Lab kamu: ${score}\nWaktu pengerjaan: ${finalTime}\n\nMari lanjut ke Ujian Akhir!`
                 });
             };
 
@@ -692,68 +677,85 @@
             };
 
             const finishExam = async () => {
-                const checkKeyExam = `exam_${user.name}_${user.class}_${user.school}`.toLowerCase();
-                
-                if (localStorage.getItem(checkKeyExam)) {
-                    setIsFinished(true);
-                    setFinalScore(localStorage.getItem(checkKeyExam + '_score') || 0);
-                    setModal({ 
-                        isOpen: true, 
-                        title: 'Sudah Mengerjakan', 
-                        message: 'Ujian Telah Diselesaikan.\n\nKamu sudah mengerjakan dan mengirimkan nilai Ujian Akhir sebelumnya. Kamu hanya diizinkan mencoba satu kali.'
-                    });
-                    return;
-                }
-
                 const score = calculateScore();
                 setFinalScore(score);
                 setIsFinished(true);
-                
-                localStorage.setItem(checkKeyExam, 'true');
-                localStorage.setItem(checkKeyExam + '_score', score);
-                
                 submitData(score);
             };
 
             const submitData = async (examScore) => {
-                if(!gasUrl) {
-                    setModal({ isOpen: true, title: 'Perhatian!', message: `Nilai kamu ${examScore}. Namun pengiriman gagal karena URL Web App Guru belum diatur.`});
-                    return;
-                }
-                
                 setIsSubmitting(true);
-                try {
-                    const fdLab = new URLSearchParams();
-                    fdLab.append("Waktu", new Date().toLocaleString("id-ID"));
-                    fdLab.append("Nama", user.name);
-                    fdLab.append("Kelas", user.class);
-                    fdLab.append("Sekolah", user.school);
-                    fdLab.append("Tipe_Kegiatan", "Simulasi Lab");
-                    fdLab.append("Nilai", labScore);
-                    fdLab.append("Waktu_Pengerjaan", labTime);
-                    
-                    await fetch(gasUrl, { method: "POST", body: fdLab, mode: "no-cors" });
-
-                    const fdExam = new URLSearchParams();
-                    fdExam.append("Waktu", new Date().toLocaleString("id-ID"));
-                    fdExam.append("Nama", user.name);
-                    fdExam.append("Kelas", user.class);
-                    fdExam.append("Sekolah", user.school);
-                    fdExam.append("Tipe_Kegiatan", "Exam Final");
-                    fdExam.append("Nilai", examScore);
-                    fdExam.append("Waktu_Pengerjaan", formatTime(timeElapsed));
-                    
-                    await fetch(gasUrl, { method: "POST", body: fdExam, mode: "no-cors" });
-                    
+                // Simulasi loading sebentar
+                setTimeout(() => {
+                    setIsSubmitting(false);
                     setModal({ 
                         isOpen: true, 
                         title: 'Berhasil!', 
-                        message: 'Selamat! Nilai Simulasi Lab dan Ujian Akhir kamu telah berhasil direkam ke server Guru.'
+                        message: 'Selamat! Kamu telah menyelesaikan Simulasi Lab dan Ujian Akhir.'
                     });
-                } catch (error) {
-                    setModal({ isOpen: true, title: 'Info Pengiriman', message: 'Ujian selesai dikerjakan. Jika nilai belum terkirim karena offline, akan disimpan secara lokal.'});
-                }
-                setIsSubmitting(false);
+                }, 800);
+            };
+
+            const downloadPDF = () => {
+                const element = document.createElement('div');
+                element.innerHTML = `
+                    <div style="padding: 30px; font-family: 'Inter', sans-serif; color: #1e293b;">
+                        <h2 style="text-align: center; color: #4338ca; margin-bottom: 5px;">Laporan Hasil Belajar: Berpikir Komputasional</h2>
+                        <p style="text-align: center; color: #64748b; margin-top: 0; font-size: 14px;">SMP Negeri 2 Ende</p>
+                        <hr style="border: 1px solid #e2e8f0; margin-bottom: 20px;" />
+                        
+                        <table style="width: 100%; margin-bottom: 20px; font-size: 14px;">
+                            <tr><td style="width: 120px; font-weight: bold;">Nama</td><td>: ${user.name}</td></tr>
+                            <tr><td style="font-weight: bold;">Kelas</td><td>: ${user.class}</td></tr>
+                            <tr><td style="font-weight: bold;">Asal Sekolah</td><td>: ${user.school}</td></tr>
+                        </table>
+
+                        <div style="display: flex; justify-content: space-around; background-color: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+                            <div style="text-align: center;">
+                                <p style="margin: 0; color: #64748b; font-size: 12px;">Nilai Simulasi Lab</p>
+                                <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold; color: #9333ea;">${labScore}</p>
+                            </div>
+                            <div style="text-align: center;">
+                                <p style="margin: 0; color: #64748b; font-size: 12px;">Nilai Ujian Akhir</p>
+                                <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold; color: #ef4444;">${finalScore}</p>
+                            </div>
+                        </div>
+
+                        <h3 style="color: #4338ca; border-bottom: 2px solid #e0e7ff; padding-bottom: 5px; font-size: 16px;">Kunci Jawaban Simulasi Lab</h3>
+                        <ul style="font-size: 12px; color: #334155; line-height: 1.6;">
+                            <li><strong>Nilai Tertinggi:</strong> =MAX(B1:B8)</li>
+                            <li><strong>Nilai Terendah:</strong> =MIN(B1:B8)</li>
+                            <li><strong>Rata-rata:</strong> =AVERAGE(B1:B8)</li>
+                            <li><strong>Banyak Data:</strong> =COUNT(B1:B8)</li>
+                            <li><strong>Total Nilai:</strong> =SUM(B1:B8)</li>
+                            <li><strong>Nilai Tengah:</strong> =MEDIAN(B1:B8)</li>
+                            <li><strong>Jumlah Siswa Nilai >= 80:</strong> =COUNTIF(B1:B8,">=80")</li>
+                        </ul>
+
+                        <h3 style="color: #4338ca; border-bottom: 2px solid #e0e7ff; padding-bottom: 5px; font-size: 16px; margin-top: 25px;">Soal & Kunci Jawaban Ujian Akhir</h3>
+                        <div style="font-size: 12px; color: #334155;">
+                            ${questions.map((q, i) => `
+                                <div style="margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed #e2e8f0;">
+                                    <p style="margin: 0 0 4px 0; font-weight: 600;">${i + 1}. ${q.q.replace(/\n/g, '<br/>')}</p>
+                                    <p style="margin: 0; color: #16a34a;"><strong>Jawaban Benar:</strong> ${
+                                        q.type === 'pg' ? q.options[q.a] :
+                                        q.type === 'tf' ? (q.a === 'true' ? 'BENAR' : 'SALAH') :
+                                        q.type === 'multi' ? q.a.map(idx => q.options[idx]).join(', ') :
+                                        q.a
+                                    }</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                html2pdf().set({
+                    margin: 10,
+                    filename: `Hasil_Belajar_${user.name.replace(/\s+/g, '_')}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                }).from(element).save();
             };
 
             if (isFinished) {
@@ -781,9 +783,11 @@
                             </div>
                             
                             {isSubmitting ? (
-                                <p className="text-blue-500 font-bold animate-pulse text-sm"><i className="fas fa-spinner fa-spin mr-2"></i> Mengirim data ke server...</p>
+                                <p className="text-indigo-500 font-bold animate-pulse text-sm"><i className="fas fa-spinner fa-spin mr-2"></i> Memproses hasil...</p>
                             ) : (
-                                <p className="text-green-600 font-bold text-sm"><i className="fas fa-cloud-upload-alt mr-1"></i> Data Telah Direkam</p>
+                                <button onClick={downloadPDF} className="w-full mt-4 py-3 bg-red-500 text-white rounded-xl font-bold md:text-lg shadow-lg hover:bg-red-600 btn-press flex items-center justify-center">
+                                    <i className="fas fa-file-pdf mr-2"></i> Download PDF Hasil & Kunci
+                                </button>
                             )}
                         </div>
                     </div>
