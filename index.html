@@ -734,17 +734,29 @@
 
                         <h3 style="color: #4338ca; border-bottom: 2px solid #e0e7ff; padding-bottom: 5px; font-size: 16px; margin-top: 25px;">Soal & Kunci Jawaban Ujian Akhir</h3>
                         <div style="font-size: 12px; color: #334155;">
-                            ${questions.map((q, i) => `
-                                <div style="margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed #e2e8f0;">
-                                    <p style="margin: 0 0 4px 0; font-weight: 600;">${i + 1}. ${q.q.replace(/\n/g, '<br/>')}</p>
-                                    <p style="margin: 0; color: #16a34a;"><strong>Jawaban Benar:</strong> ${
-                                        q.type === 'pg' ? q.options[q.a] :
-                                        q.type === 'tf' ? (q.a === 'true' ? 'BENAR' : 'SALAH') :
-                                        q.type === 'multi' ? q.a.map(idx => q.options[idx]).join(', ') :
-                                        q.a
-                                    }</p>
-                                </div>
-                            `).join('')}
+                            ${questions.map((q, i) => {
+                                let optionsHTML = '';
+                                if (q.type === 'pg') {
+                                    optionsHTML = '<div style="margin: 8px 0 8px 15px; line-height: 1.4;">' + q.options.map((opt, idx) => '<div>' + String.fromCharCode(65 + idx) + '. ' + opt + '</div>').join('') + '</div>';
+                                } else if (q.type === 'tf') {
+                                    optionsHTML = '<div style="margin: 8px 0 8px 15px; line-height: 1.4;"><div>- BENAR</div><div>- SALAH</div></div>';
+                                } else if (q.type === 'multi') {
+                                    optionsHTML = '<div style="margin: 8px 0 8px 15px; line-height: 1.4;">' + q.options.map((opt) => '<div>[  ] ' + opt + '</div>').join('') + '</div>';
+                                }
+
+                                return `
+                                    <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #e2e8f0;">
+                                        <p style="margin: 0 0 4px 0; font-weight: 600;">${i + 1}. ${q.q.replace(/\n/g, '<br/>')}</p>
+                                        ${optionsHTML}
+                                        <p style="margin: 5px 0 0 0; color: #16a34a; background-color: #f0fdf4; padding: 6px; border-radius: 4px; display: inline-block;"><strong>Jawaban Benar:</strong> ${
+                                            q.type === 'pg' ? q.options[q.a] :
+                                            q.type === 'tf' ? (q.a === 'true' ? 'BENAR' : 'SALAH') :
+                                            q.type === 'multi' ? q.a.map(idx => q.options[idx]).join(', ') :
+                                            q.a
+                                        }</p>
+                                    </div>
+                                `;
+                            }).join('')}
                         </div>
                     </div>
                 `;
