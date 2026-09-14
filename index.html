@@ -636,6 +636,10 @@
             const [timeElapsed, setTimeElapsed] = useState(0);
             const [isSubmitting, setIsSubmitting] = useState(false);
             const [modal, setModal] = useState({ isOpen: false, title: '', message: '' });
+            
+            // State untuk Password PDF
+            const [showPdfPassword, setShowPdfPassword] = useState(false);
+            const [pdfPasswordInput, setPdfPasswordInput] = useState('');
 
             useEffect(() => {
                 let timer;
@@ -797,9 +801,40 @@
                             {isSubmitting ? (
                                 <p className="text-indigo-500 font-bold animate-pulse text-sm"><i className="fas fa-spinner fa-spin mr-2"></i> Memproses hasil...</p>
                             ) : (
-                                <button onClick={downloadPDF} className="w-full mt-4 py-3 bg-red-500 text-white rounded-xl font-bold md:text-lg shadow-lg hover:bg-red-600 btn-press flex items-center justify-center">
-                                    <i className="fas fa-file-pdf mr-2"></i> Download PDF Hasil & Kunci
-                                </button>
+                                showPdfPassword ? (
+                                    <div className="w-full mt-4 bg-red-50 p-4 rounded-xl border border-red-200 fade-in text-left">
+                                        <p className="text-sm text-red-700 font-bold mb-2">Masukkan Password Guru:</p>
+                                        <div className="flex gap-2">
+                                            <input 
+                                                type="password" 
+                                                value={pdfPasswordInput} 
+                                                onChange={(e) => setPdfPasswordInput(e.target.value)} 
+                                                placeholder="Password..." 
+                                                className="flex-1 p-2 border rounded-lg border-red-300 focus:ring focus:ring-red-400 outline-none"
+                                            />
+                                            <button 
+                                                onClick={() => {
+                                                    if(pdfPasswordInput === 'GURUKEREN') {
+                                                        downloadPDF();
+                                                        setShowPdfPassword(false);
+                                                        setPdfPasswordInput('');
+                                                    } else {
+                                                        setModal({ isOpen: true, title: 'Akses Ditolak', message: 'Password salah. Kunci jawaban PDF hanya untuk Guru.' });
+                                                        setPdfPasswordInput('');
+                                                    }
+                                                }} 
+                                                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-bold transition"
+                                            >
+                                                Buka
+                                            </button>
+                                        </div>
+                                        <button onClick={() => {setShowPdfPassword(false); setPdfPasswordInput('');}} className="text-xs text-slate-500 mt-3 hover:underline w-full text-center">Batal</button>
+                                    </div>
+                                ) : (
+                                    <button onClick={() => setShowPdfPassword(true)} className="w-full mt-4 py-3 bg-red-500 text-white rounded-xl font-bold md:text-lg shadow-lg hover:bg-red-600 btn-press flex items-center justify-center">
+                                        <i className="fas fa-file-pdf mr-2"></i> Download PDF Hasil & Kunci
+                                    </button>
+                                )
                             )}
                         </div>
                     </div>
